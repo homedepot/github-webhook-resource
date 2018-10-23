@@ -1,0 +1,19 @@
+{
+  "name": "github-webhook",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.homedepot.com:gxf2dy6/github-webhook.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "get-stdin": "^6.0.0",
+    "node-fetch": "^2.2.0",
+    "validate.js": "^0.12.0"
+  }
+}
