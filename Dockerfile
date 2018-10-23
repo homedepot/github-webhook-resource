@@ -1,6 +1,7 @@
 FROM node
-ADD bin /opt/resource
-ADD package.json /opt/resource
+WORKDIR /opt/resource
+ADD bin .
+ADD package.json .
 
 RUN apt-get update & \
   npm install --quiet
