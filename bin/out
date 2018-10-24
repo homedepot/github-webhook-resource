@@ -46,9 +46,13 @@ function doWork(githubUrl, githubToken, resourceName, webhookToken) {
     // /api/v1/teams/TEAM_NAME/pipelines/PIPELINE_NAME/resources/RESOURCE_NAME/check/webhook?webhook_token=WEBHOOK_TOKEN
 
     let url = `${env.ATC_EXTERNAL_URL}/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${resourceName}/check/webhook?webhook_token=${webhookToken}`;
-    
+    let urlLower = url.toLowerCase();
+    let uri = encodeURI(urlLower);
+    logInfo(`Using githubUrl: ${githubUrl}`);
+    logInfo(`Setting Github webhook for ${uri}`);
+
     let config = { 
-        'url': url,
+        'url': uri,
         'content-type': 'json'
     };
     
