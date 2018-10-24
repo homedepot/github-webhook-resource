@@ -36,12 +36,13 @@ stdin.on('end', function () {
     let repo = params.repo;
     let githubUrl = `${githubApi}/repos/${org}/${repo}/hooks`;
 
+    let operation = params.operation;
     let resourceName = params.resource_name;
     let webhookToken = params.webhook_token;
-    doWork(githubUrl, githubToken, resourceName, webhookToken);
+    doWork(githubUrl, githubToken, operation, resourceName, webhookToken);
 });
 
-async function doWork(githubUrl, githubToken, resourceName, webhookToken) {
+async function doWork(githubUrl, githubToken, operation, resourceName, webhookToken) {
     logInfo(`Using githubUrl: ${githubUrl}`);
 
     let url = `${env.ATC_EXTERNAL_URL}/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${resourceName}/check/webhook?webhook_token=${webhookToken}`;
@@ -120,6 +121,8 @@ function logInfo(message) {
 }
 
 function validateInput(source, params) {
+    let validOperations = ['POST'];
+
     let invalid = false;
     if (source.github_api === undefined)    invalid = inputError('source.github_api');
     if (source.github_token === undefined)  invalid = inputError('source.github_api');
@@ -127,6 +130,12 @@ function validateInput(source, params) {
     if (params.repo === undefined)          invalid = inputError('params.repo');
     if (params.resource_name === undefined) invalid = inputError('params.resource_name');
     if (params.webhook_token === undefined) invalid = inputError('params.webhook_token');
+    if (params.operation === undefined)     invalid = inputError('params.operation');
+
+    if (!validOperations.includes(params.operation)) {
+        invalid = true;
+        logInfo(`Unsupported operation: ${params.operation}`);
+    }
 
     if (invalid) process.exit(1);
 }
