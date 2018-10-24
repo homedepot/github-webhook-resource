@@ -111,7 +111,7 @@ function emit(result) {
             id: result.id.toString()
         }
     }
-    logInfo(output);
+    logInfo(`Output: ${JSON.stringify(output)}`);
     console.log(JSON.stringify(output, null, 2));
     process.exit(0);
 }
