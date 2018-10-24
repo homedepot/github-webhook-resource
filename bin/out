@@ -74,6 +74,7 @@ async function doWork(githubUrl, githubToken, resourceName, webhookToken) {
     const existingHook = existingHookList.find(hook => hook.config.url == uri);
 
     if(existingHook != null) {
+        logInfo('Webhook already exists');
         emit(existingHook);
     } else {
         let bodyString = JSON.stringify(body);
