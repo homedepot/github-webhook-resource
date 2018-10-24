@@ -28,15 +28,14 @@ stdin.on('end', function () {
 
     // validate input
 
-    // fix camelcase later
-    let githubApi = source.githubApi; 
-    let githubToken = source.githubToken;
+    let githubApi = source.github_api; 
+    let githubToken = source.github_token;
     let org = params.org;
     let repo = params.repo;
     let githubUrl = `${githubApi}/repos/${org}/${repo}/hooks`;
 
-    let resourceName = params.resourceName;
-    let webhookToken = params.webhookToken;
+    let resourceName = params.resource_name;
+    let webhookToken = params.webhook_token;
     doWork(githubUrl, githubToken, resourceName, webhookToken);
 }).catch(error => {
     console.error('Error', error.stack);
