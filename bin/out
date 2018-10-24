@@ -89,14 +89,13 @@ async function doWork(githubUrl, githubToken, resourceName, webhookToken) {
             }
         }).then(res => {
             if (res.ok) {
-                return res.json();
+                res.json().then(response => {
+                    logInfo(`Success: ${JSON.stringify(response)}`);
+                    emit(response);
+                });
             } else {
                 throw new Error(`Response Status: ${res.status} Response Status Text: ${res.statusText} \n Request Body: ${bodyString}`);
             }
-        })
-        .then(response => { 
-            logInfo('Success:', JSON.stringify(response));
-            emit(response);
         })
         .catch(error => {
             logInfo(error.stack);
