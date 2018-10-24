@@ -2,13 +2,29 @@
 'use strict'
 
 const fetch = require('node-fetch');
-const stdin = require('get-stdin');
 const env = process.env;
+const stdin = process.stdin;
+let inputChunks = [];
 
-stdin().then(str => {
-    let input = JSON.parse(str);
-    let source = input.source || {};
-    let params = input.params || {};
+stdin.setEncoding('utf8');
+
+stdin.on('data', function (chunk) {
+    inputChunks.push(chunk);
+});
+
+stdin.on('end', function () {
+    let inputJSON = inputChunks.join("");
+    logInfo(`Parsed stdin: ${inputJSON}`);
+    let parsedData;
+    try {
+        parsedData = JSON.parse(inputJSON);
+    } catch(error) {
+    logInfo('Error:', error.stack);
+        process.exit(1);
+    }
+
+    let source = parsedData.source || {};
+    let params = parsedData.params || {};
 
     // validate input
 
