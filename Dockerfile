@@ -3,5 +3,5 @@ WORKDIR /opt/resource
 ADD bin .
 ADD package.json .
 
-RUN apt-get update & \
-  npm install --quiet
+RUN npm install --quiet
+RUN apt-get update && apt-get install -y jq
