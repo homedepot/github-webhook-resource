@@ -12,7 +12,8 @@ stdin().then(str => {
 
     // validate input
 
-    let githubApi = source.githubApi;
+    // fix camelcase later
+    let githubApi = source.githubApi; 
     let githubToken = source.githubToken;
     let org = params.org;
     let repo = params.repo;
@@ -41,6 +42,8 @@ function doWork(githubUrl, githubToken, resourceName, webhookToken) {
         'config': config
     };
     
+    // TODO: Check if exists before create/delete
+
     fetch(githubUrl, {
         method: 'POST',
         body: JSON.stringify(body),
