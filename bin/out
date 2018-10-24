@@ -37,14 +37,9 @@ stdin.on('end', function () {
     let resourceName = params.resource_name;
     let webhookToken = params.webhook_token;
     doWork(githubUrl, githubToken, resourceName, webhookToken);
-}).catch(error => {
-    console.error('Error', error.stack);
-    process.exit(1);
 });
 
-function doWork(githubUrl, githubToken, resourceName, webhookToken) {
-    // /api/v1/teams/TEAM_NAME/pipelines/PIPELINE_NAME/resources/RESOURCE_NAME/check/webhook?webhook_token=WEBHOOK_TOKEN
-
+async function doWork(githubUrl, githubToken, resourceName, webhookToken) {
     let url = `${env.ATC_EXTERNAL_URL}/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${resourceName}/check/webhook?webhook_token=${webhookToken}`;
     let urlLower = url.toLowerCase();
     let uri = encodeURI(urlLower);
@@ -60,23 +55,62 @@ function doWork(githubUrl, githubToken, resourceName, webhookToken) {
         'name': 'web',
         'config': config
     };
-    
-    // TODO: Check if exists before create/delete
+  
+    const existingHooks = async () => {
+        const response = await fetch(githubUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': `token ${githubToken}`
+            }
+        });
+        const json = await response.json();
+        return json;
+    };
 
-    fetch(githubUrl, {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers:{
-          'Content-Type': 'application/json',
-          'Authorization': `token ${githubToken}`
-        }
-      }).then(res => res.json())
-      .then(response => { 
-          console.log('Success:', JSON.stringify(response));
-          process.exit(0);
+    const existingHookList = await existingHooks();
+    const existingHook = existingHookList.find(hook => hook.config.url == uri);
+    if(existingHook != null) {
+        emit(existingHook);
+    } else {
+        let bodyString = JSON.stringify(body);
+        logInfo(`Fetching with body: ${bodyString}`);
+    
+        fetch(githubUrl, {
+            method: 'POST',
+            body: bodyString,
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `token ${githubToken}`
+            }
+        }).then(res => {
+            if (res.ok) {
+                return res.json();
+            } else {
+                throw new Error(`Response Status: ${res.status} Response Status Text: ${res.statusText} \n Request Body: ${bodyString}`);
+            }
         })
-      .catch(error => {
-          console.error('Error:', error.stack);
-          process.exit(1);
-      });
+        .then(response => { 
+            logInfo('Success:', JSON.stringify(response));
+            emit(response);
+        })
+        .catch(error => {
+            logInfo(error.stack);
+            process.exit(1);
+        });
+    }
+}
+
+function emit(result) {
+    let output = {
+        version: {
+            id: result.id.toString()
+        }
+    }
+    logInfo(output);
+    console.log(JSON.stringify(output, null, 2));
+    process.exit(0);
+}
+
+function logInfo(message) {
+    console.error(message);
 }
