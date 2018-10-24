@@ -54,7 +54,7 @@ async function doWork(githubUrl, githubToken, resourceName, webhookToken) {
     };
     
     let body = {
-        'name': 'web',
+        'name': 'web',  // NOTE: Github will deprecated this field soon
         'config': config
     };
   
