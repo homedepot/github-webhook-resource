@@ -4,22 +4,23 @@
 const fetch = require('node-fetch');
 const env = process.env;
 const stdin = process.stdin;
-let inputChunks = [];
 
 stdin.setEncoding('utf8');
 
+let inputChunks = [];
 stdin.on('data', function (chunk) {
     inputChunks.push(chunk);
 });
 
 stdin.on('end', function () {
     let inputJSON = inputChunks.join("");
-    logInfo(`Parsed stdin: ${inputJSON}`);
+    logInfo(`Received stdin: ${inputJSON}`);
+
     let parsedData;
     try {
         parsedData = JSON.parse(inputJSON);
     } catch(error) {
-    logInfo('Error:', error.stack);
+        logInfo('Error:', error.stack);
         process.exit(1);
     }
 
@@ -40,10 +41,11 @@ stdin.on('end', function () {
 });
 
 async function doWork(githubUrl, githubToken, resourceName, webhookToken) {
+    logInfo(`Using githubUrl: ${githubUrl}`);
+
     let url = `${env.ATC_EXTERNAL_URL}/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${resourceName}/check/webhook?webhook_token=${webhookToken}`;
     let urlLower = url.toLowerCase();
     let uri = encodeURI(urlLower);
-    logInfo(`Using githubUrl: ${githubUrl}`);
     logInfo(`Setting Github webhook for ${uri}`);
 
     let config = { 
@@ -69,11 +71,12 @@ async function doWork(githubUrl, githubToken, resourceName, webhookToken) {
 
     const existingHookList = await existingHooks();
     const existingHook = existingHookList.find(hook => hook.config.url == uri);
+
     if(existingHook != null) {
         emit(existingHook);
     } else {
         let bodyString = JSON.stringify(body);
-        logInfo(`Fetching with body: ${bodyString}`);
+        logInfo(`Fetching with request body: ${bodyString}`);
     
         fetch(githubUrl, {
             method: 'POST',
