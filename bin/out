@@ -28,6 +28,7 @@ stdin.on('end', function () {
     let params = parsedData.params || {};
 
     // validate input
+    validateInput(source, params);
 
     let githubApi = source.github_api; 
     let githubToken = source.github_token;
@@ -116,4 +117,21 @@ function emit(result) {
 
 function logInfo(message) {
     console.error(message);
+}
+
+function validateInput(source, params) {
+    let invalid = false;
+    if (source.github_api === undefined)    invalid = inputError('source.github_api');
+    if (source.github_token === undefined)  invalid = inputError('source.github_api');
+    if (params.org === undefined)           invalid = inputError('params.org');
+    if (params.repo === undefined)          invalid = inputError('params.repo');
+    if (params.resource_name === undefined) invalid = inputError('params.resource_name');
+    if (params.webhook_token === undefined) invalid = inputError('params.webhook_token');
+
+    if (invalid) process.exit(1);
+}
+
+function inputError(param) {
+    console.error(`Invalid configuration: ${param} is required`);
+    return true;
 }
