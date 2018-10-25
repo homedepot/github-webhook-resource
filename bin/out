@@ -27,7 +27,6 @@ stdin.on('end', function () {
     let source = parsedData.source || {};
     let params = parsedData.params || {};
 
-    // validate input
     validateInput(source, params);
 
     let githubApi = source.github_api; 
@@ -36,7 +35,7 @@ stdin.on('end', function () {
     let repo = params.repo;
     let githubUrl = `${githubApi}/repos/${org}/${repo}/hooks`;
 
-    let operation = params.operation;
+    let operation = params.operation.toLowerCase();
     let resourceName = params.resource_name;
     let webhookToken = params.webhook_token;
     doWork(githubUrl, githubToken, operation, resourceName, webhookToken);
@@ -121,7 +120,7 @@ function logInfo(message) {
 }
 
 function validateInput(source, params) {
-    let validOperations = ['POST'];
+    let validOperations = ['post'];
 
     let invalid = false;
     if (source.github_api === undefined)    invalid = inputError('source.github_api');
@@ -130,9 +129,10 @@ function validateInput(source, params) {
     if (params.repo === undefined)          invalid = inputError('params.repo');
     if (params.resource_name === undefined) invalid = inputError('params.resource_name');
     if (params.webhook_token === undefined) invalid = inputError('params.webhook_token');
-    if (params.operation === undefined)     invalid = inputError('params.operation');
-
-    if (!validOperations.includes(params.operation)) {
+    
+    if (params.operation === undefined) {  
+        invalid = inputError('params.operation');
+    } else if (!validOperations.includes(params.operation.toLowerCase())) {
         invalid = true;
         logInfo(`Unsupported operation: ${params.operation}`);
     }
