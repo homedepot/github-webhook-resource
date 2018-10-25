@@ -43,7 +43,7 @@ stdin.on('end', function () {
 async function doWork(githubUrl, githubToken, operation, resourceName, webhookToken) {
     logInfo(`Using githubUrl: ${githubUrl}`);
 
-    let url = `${env.ATC_EXTERNAL_URL}/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${resourceName}/check/webhook?webhook_token=${webhookToken}`;
+    let url = `${env.ATC_EXTERNAL_URL}/api/v1/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${resourceName}/check/webhook?webhook_token=${webhookToken}`;
     let urlLower = url.toLowerCase();
     let uri = encodeURI(urlLower);
     logInfo(`Setting Github webhook for ${uri}`);
