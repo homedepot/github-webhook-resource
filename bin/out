@@ -90,7 +90,7 @@ async function doWork(githubUrl, githubToken, operation, resourceName, webhookTo
                 emit(existingHook);
             } else {
                 logInfo('Webhook does not exist');
-                emit({id: Date.now});
+                emit({id: Date.now()});
             }
             break;
     }
