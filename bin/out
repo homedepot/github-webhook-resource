@@ -65,7 +65,7 @@ async function doWork(githubUrl, githubToken, operation, resourceName, webhookTo
             const json = await response.json();
             return json;
         } else {
-            logInfo(`Error talking to Github: Response Status: ${response.status} Response Status Text: ${response.statusText}`);
+            logInfo(`Error from Github: Response Status: ${response.status} Response Status Text: ${response.statusText}`);
             process.exit(1);
         }
     };
@@ -97,9 +97,10 @@ async function doWork(githubUrl, githubToken, operation, resourceName, webhookTo
 }
 
 function createWebhook(githubUrl, method, githubToken, body) {
-    logInfo(`Fetching with request body: ${body}`);
+    const bodyString = JSON.stringify(body);
+    logInfo(`Fetching with request body: ${bodyString}`);
     
-    const response = callGithub(githubUrl, method, githubToken, body);
+    const response = callGithub(githubUrl, method, githubToken, bodyString);
     response.then(res => {
         if (res.ok) {
             res.json().then(response => {
@@ -107,7 +108,7 @@ function createWebhook(githubUrl, method, githubToken, body) {
                 emit(response);
             });
         } else {
-            throw new Error(`Response Status: ${res.status} Response Status Text: ${res.statusText} \n Request Body: ${bodyString}`);
+            throw new Error(`Error from Github: Response Status: ${res.status} Response Status Text: ${res.statusText} \n Request Body: ${bodyString}`);
         }
     })
     .catch(error => {
