@@ -24,20 +24,20 @@ stdin.on('end', function () {
         process.exit(1);
     }
 
-    let source = parsedData.source || {};
-    let params = parsedData.params || {};
+    validateInput(parsedData);
 
-    validateInput(source, params);
+    const source = parsedData.source || {};
+    const params = parsedData.params || {};
 
-    let githubApi = source.github_api; 
-    let githubToken = source.github_token;
-    let org = params.org;
-    let repo = params.repo;
-    let githubUrl = `${githubApi}/repos/${org}/${repo}/hooks`;
+    const githubApi = source.github_api; 
+    const githubToken = source.github_token;
+    const org = params.org;
+    const repo = params.repo;
+    const githubUrl = `${githubApi}/repos/${org}/${repo}/hooks`;
 
-    let operation = params.operation.toLowerCase();
-    let resourceName = params.resource_name;
-    let webhookToken = params.webhook_token;
+    const operation = params.operation.toLowerCase();
+    const resourceName = params.resource_name;
+    const webhookToken = params.webhook_token;
     doWork(githubUrl, githubToken, operation, resourceName, webhookToken);
 });
 
@@ -58,50 +58,73 @@ async function doWork(githubUrl, githubToken, operation, resourceName, webhookTo
         'name': 'web',  // NOTE: Github will deprecated this field soon
         'config': config
     };
-  
+
     const existingHooks = async () => {
-        const response = await fetch(githubUrl, {
-            method: 'GET',
-            headers: {
-                'Authorization': `token ${githubToken}`
-            }
-        });
-        const json = await response.json();
-        return json;
+        const response = await callGithub(githubUrl, 'GET', githubToken);
+        if (response.ok) {
+            const json = await response.json();
+            return json;
+        } else {
+            logInfo(`Error talking to Github: Response Status: ${response.status} Response Status Text: ${response.statusText}`);
+            process.exit(1);
+        }
     };
 
     const existingHookList = await existingHooks();
     const existingHook = existingHookList.find(hook => hook.config.url == uri);
 
-    if(existingHook != null) {
-        logInfo('Webhook already exists');
-        emit(existingHook);
-    } else {
-        let bodyString = JSON.stringify(body);
-        logInfo(`Fetching with request body: ${bodyString}`);
-    
-        fetch(githubUrl, {
-            method: 'POST',
-            body: bodyString,
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `token ${githubToken}`
-            }
-        }).then(res => {
-            if (res.ok) {
-                res.json().then(response => {
-                    logInfo(`Success: ${JSON.stringify(response)}`);
-                    emit(response);
-                });
+    switch (operation) {
+        case 'create':
+            if (existingHook != null) {
+                logInfo('Webhook already exists');
+                emit(existingHook);
             } else {
-                throw new Error(`Response Status: ${res.status} Response Status Text: ${res.statusText} \n Request Body: ${bodyString}`);
+                createWebhook(githubUrl, 'POST', githubToken, body);
             }
-        })
-        .catch(error => {
-            logInfo(error.stack);
-            process.exit(1);
-        });
+            break;
+        case 'delete':
+            if (existingHook != null) {
+                const deleteUri = `${githubUrl}/${existingHook.id}`;
+                await callGithub(deleteUri, 'DELETE', githubToken);
+                logInfo('Webhook deleted successfully');
+                emit(existingHook);
+            } else {
+                logInfo('Webhook does not exist');
+                emit({id: Date.now});
+            }
+            break;
     }
+}
+
+function createWebhook(githubUrl, method, githubToken, body) {
+    logInfo(`Fetching with request body: ${body}`);
+    
+    const response = callGithub(githubUrl, method, githubToken, body);
+    response.then(res => {
+        if (res.ok) {
+            res.json().then(response => {
+                logInfo(`Success: ${JSON.stringify(response)}`);
+                emit(response);
+            });
+        } else {
+            throw new Error(`Response Status: ${res.status} Response Status Text: ${res.statusText} \n Request Body: ${bodyString}`);
+        }
+    })
+    .catch(error => {
+        logInfo(error.stack);
+        process.exit(1);
+    });
+}
+
+function callGithub(githubUrl, method, githubToken, body) {
+    return fetch(githubUrl, {
+        method: method,
+        body: body,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `token ${githubToken}`
+        }
+    })
 }
 
 function emit(result) {
@@ -119,28 +142,34 @@ function logInfo(message) {
     console.error(message);
 }
 
-function validateInput(source, params) {
-    let validOperations = ['post'];
-
-    let invalid = false;
-    if (source.github_api === undefined)    invalid = inputError('source.github_api');
-    if (source.github_token === undefined)  invalid = inputError('source.github_api');
-    if (params.org === undefined)           invalid = inputError('params.org');
-    if (params.repo === undefined)          invalid = inputError('params.repo');
-    if (params.resource_name === undefined) invalid = inputError('params.resource_name');
-    if (params.webhook_token === undefined) invalid = inputError('params.webhook_token');
+function validateInput(parsedData) {
+    const source = parsedData.source;
+    const params = parsedData.params;
+    const validOperations = ['create', 'delete'];
     
-    if (params.operation === undefined) {  
-        invalid = inputError('params.operation');
-    } else if (!validOperations.includes(params.operation.toLowerCase())) {
-        invalid = true;
-        logInfo(`Unsupported operation: ${params.operation}`);
+    let isValid = true;
+    isValid = validateItem(source, 'github_api', isValid);
+    isValid = validateItem(source, 'github_token', isValid);
+    isValid = validateItem(params, 'org', isValid);
+    isValid = validateItem(params, 'repo', isValid);
+    isValid = validateItem(params, 'resource_name', isValid);
+    isValid = validateItem(params, 'webhook_token', isValid);
+    isValid = validateItem(params, 'operation', isValid);
+    
+    if (parsedData['params'].operation && !validOperations.includes(parsedData['params'].operation.toLowerCase())) {
+        console.error(`Unsupported operation: ${params.operation}`);
+        isValid = false;
     }
 
-    if (invalid) process.exit(1);
+    if (!isValid) process.exit(1);
 }
 
-function inputError(param) {
-    console.error(`Invalid configuration: ${param} is required`);
-    return true;
+function validateItem(config, property, validState) {
+
+    if (config[property] === undefined || config[property] === null) {
+        console.error(`Invalid configuration: ${config}.${property} is required`);
+        return false;
+    } else {
+        return validState;
+    }
 }
