@@ -6,6 +6,10 @@
     "type": "git",
     "url": "git@github.homedepot.com:gxf2dy6/github-webhook.git"
   },
+  "scripts": {
+    "debug-out-create": "cat payload-create | node --nolazy --inspect-brk=9229 bin/out",
+    "debug-out-delete": "cat payload-delete | node --nolazy --inspect-brk=9229 bin/out"
+  },
   "license": "ISC",
   "dependencies": {
     "get-stdin": "^6.0.0",
