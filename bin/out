@@ -28,19 +28,19 @@ stdin.on('end', function () {
     const source = parsedData.source || {};
     const params = parsedData.params || {};
 
+    processWebhook(source, params);
+});
+
+async function processWebhook(source, params) {
     const githubApi = source.github_api; 
     const githubToken = source.github_token;
     const org = params.org;
     const repo = params.repo;
-    const githubUrl = `${githubApi}/repos/${org}/${repo}/hooks`;
 
     const operation = params.operation.toLowerCase();
     const resourceName = params.resource_name;
     const webhookToken = params.webhook_token;
-    doWork(githubUrl, githubToken, operation, resourceName, webhookToken);
-});
-
-async function doWork(githubUrl, githubToken, operation, resourceName, webhookToken) {
+    const githubUrl = `${githubApi}/repos/${org}/${repo}/hooks`;
     logInfo(`Using githubUrl: ${githubUrl}`);
 
     let url = `${env.ATC_EXTERNAL_URL}/api/v1/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${resourceName}/check/webhook?webhook_token=${webhookToken}`;
@@ -54,7 +54,7 @@ async function doWork(githubUrl, githubToken, operation, resourceName, webhookTo
     };
     
     let body = {
-        'name': 'web',  // NOTE: Github will deprecated this field soon
+        'name': 'web',  // NOTE: Github plans to deprecate this field. https://developer.github.com/v3/repos/hooks/#create-a-hook
         'config': config
     };
 
