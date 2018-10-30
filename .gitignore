@@ -1,4 +1,6 @@
 .vscode/
+.history/
 node_modules/
+
 payload*
 .DS_Store
