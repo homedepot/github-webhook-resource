@@ -146,36 +146,31 @@ function logInfo(message) {
 }
 
 function validateInput(parsedData) {
-    const source = parsedData.source;
-    const params = parsedData.params;
     const validOperations = ['create', 'delete'];
     
     let isValid = true;
-    isValid = validateItem(parsedData, 'source', 'github_api', isValid);
-    isValid = validateItem(parsedData, 'source', 'github_token', isValid);
-    isValid = validateItem(process, 'env', 'ATC_EXTERNAL_URL', isValid);
-    isValid = validateItem(process, 'env', 'BUILD_TEAM_NAME', isValid);
-    isValid = validateItem(process, 'env', 'BUILD_PIPELINE_NAME', isValid);
-    isValid = validateItem(parsedData, 'params', 'org', isValid);
-    isValid = validateItem(parsedData, 'params', 'repo', isValid);
-    isValid = validateItem(parsedData, 'params', 'resource_name', isValid);
-    isValid = validateItem(parsedData, 'params', 'webhook_token', isValid);
-    isValid = validateItem(parsedData, 'params', 'operation', isValid);
-    
-    if (parsedData['params'].operation && !validOperations.includes(parsedData['params'].operation.toLowerCase())) {
-        console.error(`Unsupported operation: ${params.operation}`);
-        isValid = false;
-    }
+    isValid = validateItem(isValid, process, 'env', 'ATC_EXTERNAL_URL');
+    isValid = validateItem(isValid, process, 'env', 'BUILD_TEAM_NAME');
+    isValid = validateItem(isValid, process, 'env', 'BUILD_PIPELINE_NAME');
+    isValid = validateItem(isValid, parsedData, 'source', 'github_api');
+    isValid = validateItem(isValid, parsedData, 'source', 'github_token');
+    isValid = validateItem(isValid, parsedData, 'params', 'org');
+    isValid = validateItem(isValid, parsedData, 'params', 'repo');
+    isValid = validateItem(isValid, parsedData, 'params', 'resource_name');
+    isValid = validateItem(isValid, parsedData, 'params', 'webhook_token');
+    isValid = validateItem(isValid, parsedData, 'params', 'operation', validOperations);
 
     if (!isValid) process.exit(1);
 }
 
-function validateItem(configObject, config, property, validState) {
+function validateItem(validState, configObject, configItem, property, validValues) {
 
-    if (!configObject[config][property]) {
-        console.error(`Invalid configuration: ${config}.${property} is required`);
+    if (!configObject[configItem][property]) {
+        console.error(`Invalid configuration: ${configItem}.${property} is required`);
         return false;
-    } else {
-        return validState;
+    } else if (validValues && !validValues.includes(configObject[configItem][property].toLowerCase())) {
+        console.error(`Unsupported configuration: ${configItem}.${property} = ${configObject[configItem][property]}`);
+        return false;
     }
+    return validState;
 }   
