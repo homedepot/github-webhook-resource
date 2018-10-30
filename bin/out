@@ -58,21 +58,7 @@ async function processWebhook(source, params) {
         'config': config
     };
 
-    const existingHooks = async () => {
-        const response = await callGithub(githubUrl, 'GET', githubToken);
-        if (response.ok) {
-            const json = await response.json();
-            return json;
-        } else {
-            logInfo(`Error from Github: Response Status: ${response.status} Response Status Text: ${response.statusText}`);
-            if (response.status == 404) {
-                logInfo("Response was 404. Does your token have sufficient access rights?");
-            }
-            process.exit(1);
-        }
-    };
-
-    const existingHookList = await existingHooks();
+    const existingHookList = await getExistingHooks(githubUrl, githubToken);
     const existingHook = existingHookList.find(hook => hook.config.url == uri);
 
     switch (operation) {
@@ -96,7 +82,21 @@ async function processWebhook(source, params) {
             }
             break;
     }
-}
+};
+
+async function getExistingHooks(githubUrl, githubToken) {
+    const response = await callGithub(githubUrl, 'GET', githubToken);
+    if (response.ok) {
+        const json = await response.json();
+        return json;
+    } else {
+        logInfo(`Error from Github: Response Status: ${response.status} Response Status Text: ${response.statusText}`);
+        if (response.status == 404) {
+            logInfo("Response was 404. Does your token have administrator access to t repo?");
+        }
+        process.exit(1);
+    }
+};
 
 function createWebhook(githubUrl, method, githubToken, body) {
     const bodyString = JSON.stringify(body);
@@ -178,4 +178,4 @@ function validateItem(configObject, config, property, validState) {
     } else {
         return validState;
     }
-}
+}   
