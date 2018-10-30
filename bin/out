@@ -65,6 +65,9 @@ async function doWork(githubUrl, githubToken, operation, resourceName, webhookTo
             return json;
         } else {
             logInfo(`Error from Github: Response Status: ${response.status} Response Status Text: ${response.statusText}`);
+            if (response.status == 404) {
+                logInfo("Response was 404. Does your token have sufficient access rights?");
+            }
             process.exit(1);
         }
     };
