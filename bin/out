@@ -91,7 +91,7 @@ async function getExistingHooks(githubUrl, githubToken) {
     } else {
         logInfo(`Error from Github: Response Status: ${response.status} Response Status Text: ${response.statusText}`);
         if (response.status == 404) {
-            logInfo(`Response was 404. Does your token have administrator access to '${githubUrl.replace('/hooks', '')}'?`);
+            logInfo(`Response was 404. Does your token have public_repo access to '${githubUrl.replace('/hooks', '')}'? \nhttps://github.homedepot.com/settings/tokens`);
         }
         process.exit(1);
     }
