@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict'
 
-const fetch = require('node-fetch');
+const request = require('request-promise');
 const env = process.env;
 const stdin = process.stdin;
 
@@ -40,8 +40,8 @@ async function processWebhook(source, params) {
     const operation = params.operation.toLowerCase();
     const resourceName = params.resource_name;
     const webhookToken = params.webhook_token;
-    const githubUrl = `${githubApi}/repos/${org}/${repo}/hooks`;
-    logInfo(`Using githubUrl: ${githubUrl}`);
+    const webhookEndpoint = `${githubApi}/repos/${org}/${repo}/hooks`;
+    logInfo(`Using webhook endpoint: ${webhookEndpoint}`);
 
     let url = `${env.ATC_EXTERNAL_URL}/api/v1/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${resourceName}/check/webhook?webhook_token=${webhookToken}`;
     let uri = encodeURI(url);
@@ -57,76 +57,79 @@ async function processWebhook(source, params) {
         'config': config
     };
 
-    const existingHookList = await getExistingHooks(githubUrl, githubToken);
-    const existingHook = existingHookList.find(hook => hook.config.url == uri);
+    const existingHookList = await getExistingHooks(webhookEndpoint, githubToken);
+    const existingHook = existingHookList.find(hook => hook.config.url === uri);
 
     switch (operation) {
         case 'create':
-            if (existingHook != null) {
+            if (existingHook == null) {
+                createWebhook(webhookEndpoint, 'POST', githubToken, body);
+            } else {
                 logInfo('Webhook already exists');
                 emit(existingHook);
-            } else {
-                createWebhook(githubUrl, 'POST', githubToken, body);
             }
             break;
         case 'delete':
-            if (existingHook != null) {
-                const deleteUri = `${githubUrl}/${existingHook.id}`;
-                await callGithub(deleteUri, 'DELETE', githubToken);
-                logInfo('Webhook deleted successfully');
-                emit(existingHook);
-            } else {
+            if (existingHook == null) {
                 logInfo('Webhook does not exist');
                 emit({id: Date.now()});
+            } else {
+                deleteWebhook(webhookEndpoint, existingHook, githubToken);
             }
             break;
     }
 };
 
-async function getExistingHooks(githubUrl, githubToken) {
-    const response = await callGithub(githubUrl, 'GET', githubToken);
-    if (response.ok) {
-        const json = await response.json();
-        return json;
-    } else {
-        logInfo(`Error from Github: Response Status: ${response.status} Response Status Text: ${response.statusText}`);
-        if (response.status == 404) {
-            logInfo(`Response was 404. Does your token have public_repo access to '${githubUrl.replace('/hooks', '')}'? \nhttps://github.homedepot.com/settings/tokens`);
-        }
-        process.exit(1);
-    }
+function getExistingHooks(webhookEndpoint, githubToken) {
+    return callGithub(webhookEndpoint, 'GET', githubToken)
+        .then(res => JSON.parse(res.body));
 };
 
-function createWebhook(githubUrl, method, githubToken, body) {
+function createWebhook(webhookEndpoint, method, githubToken, body) {
     const bodyString = JSON.stringify(body);
-    logInfo(`Fetching with request body: ${bodyString}`);
-    
-    const response = callGithub(githubUrl, method, githubToken, bodyString);
-    response.then(res => {
-        if (res.ok) {
-            res.json().then(response => {
-                logInfo(`Success: ${JSON.stringify(response)}`);
-                emit(response);
-            });
-        } else {
-            throw new Error(`Error from Github: Response Status: ${res.status} Response Status Text: ${res.statusText} \n Request Body: ${bodyString}`);
-        }
-    })
-    .catch(error => {
-        logInfo(error.stack);
-        process.exit(1);
-    });
+
+    callGithub(webhookEndpoint, method, githubToken, bodyString)
+        .then(res => {
+            logInfo(`Successfully created webhook: ${res.body}`);
+            emit(JSON.parse(res.body));
+        })
+        .catch(error => {
+            logInfo(error.stack);
+            process.exit(1);
+        });
 }
 
-function callGithub(githubUrl, method, githubToken, body) {
-    return fetch(githubUrl, {
+function deleteWebhook(webhookEndpoint, webhook, githubToken) {
+    const deleteUri = `${webhookEndpoint}/${webhook.id}`;
+
+    callGithub(deleteUri, 'DELETE', githubToken)
+        .then(() => {
+            logInfo('Webhook deleted successfully');
+            emit(webhook);
+        });
+}
+
+function callGithub(uri, method, githubToken, body) {
+    let options = {
+        uri: uri,
         method: method,
         body: body,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `token ${githubToken}`
-        }
-    })
+          'Authorization': `token ${githubToken}`,
+          'User-Agent': 'node.js'
+        },
+        resolveWithFullResponse: true
+    };
+
+    return request(options)
+        .catch(err => {
+            logInfo(`Error while contacting Github: ${err.name}\nResponse Status: ${err.statusCode}, Message: ${err.error}`);
+            if (err.statusCode == 404) {
+                logInfo(`Response was 404. Does your token have public_repo access to '${webhookEndpoint.replace('/hooks', '')}'? \nhttps://github.homedepot.com/settings/tokens`);
+            }
+            process.exit(1);
+        });
 }
 
 function emit(result) {
@@ -136,7 +139,10 @@ function emit(result) {
         }
     }
     logInfo(`Output: ${JSON.stringify(output)}`);
+
+    // Output version to Concourse using stdout
     console.log(JSON.stringify(output, null, 2));
+
     process.exit(0);
 }
 
