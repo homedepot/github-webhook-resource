@@ -125,8 +125,10 @@ function callGithub(uri, method, githubToken, body) {
     return request(options)
         .catch(err => {
             logInfo(`Error while contacting Github: ${err.name}\nResponse Status: ${err.statusCode}, Message: ${err.error}`);
-            if (err.statusCode == 404) {
-                logInfo(`Response was 404. Does your token have public_repo access to '${webhookEndpoint.replace('/hooks', '')}'? \nhttps://github.homedepot.com/settings/tokens`);
+            if (err.statusCode === 404) {
+                logInfo(`Response was 404:\n` +
+                `    Your token's account must have \'Administrator\' access to your repo. ${uri.replace('api.', '').replace('/repos', '').replace('/hooks', '/settings/collaboration')}\n` +
+                `    Additionally, your token must have \'public_repo\' access to your repo. https://github.com/settings/tokens`);
             }
             process.exit(1);
         });
