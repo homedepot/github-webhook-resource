@@ -27,22 +27,6 @@ you want to merge your changes to the Github-Webhook-Resource:
    then push the new changes to your pull request branch.
 5. Once the pull request is approved, one of the [maintainers](MAINTAINERS.md). will merge it.
 
-## Request for Comments
-
-If you just want to receive feedback for a contribution proposal, open an “RFC”
-(“Request for Comments”) pull request:
-
-1. On your fork of the
-   [Github-Webhook-Resource](https://github.com/homedepot/github-webhook-resource), create a
-   branch for the contribution you want feedback on. Use a meaningful name.
-1. Create your proposal based on the existing codebase.
-1. [Create a pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/)
-   against the master branch of the Github-Webhook-Resource repository. Prefix your pull
-   request name with `[RFC]`.
-1. Discuss your proposal with the community on the pull request page (or on any
-   other channel). Add the conclusion(s) of this discussion to the pull request
-   page.
-
 ## Contribution Quality Standards
 
 Your contribution needs to meet the following standards:
