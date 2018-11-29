@@ -1,2 +1,2 @@
 # Maintainers
-- Gavin Figueroa <gavin_figueroa@homedepot.com>
+- Gavin Figueroa [@GavinFigueroa](https://github.com/GavinFigueroa) <gavin_figueroa@homedepot.com>
