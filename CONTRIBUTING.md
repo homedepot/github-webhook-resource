@@ -3,7 +3,7 @@
 First off, thank you for considering contributing to the Github-Webhook-Resource! This resource is a simple project, but has plenty of room for improvement. Many features of Github's webhook implementation are yet to be built into the Github-Webhook-Resource, and all contributions are welcome.
 
 If you're just looking for quick feedback for an idea or proposal, feel free to open an
-[issue](https://github.com/homedepot/github-webhook-resource/issues).
+[issue](https://github.com/homedepot/github-webhook-resource/issues/new).
 
 Follow the [contribution workflow](#contribution-workflow) for submitting your
 changes to the Github-Webhook-Resource codebase. If you want to receive high-level but still
