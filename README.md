@@ -26,7 +26,7 @@ resources:
     github_token: ((github-token))
 ```
 
--	`github_api`: *Required.* The Github Api Url for your repo.
+-	`github_api`: *Required.* The Github API URL for your repo.
 -   `github_token`: *Required.* [A Github token with public_repo scope.](https://github.com/settings/tokens/new?scopes=public_repo)
 
 Behavior
