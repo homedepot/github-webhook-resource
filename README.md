@@ -27,7 +27,7 @@ resources:
 ```
 
 -	`github_api`: *Required.* The Github API URL for your repo.
--   `github_token`: *Required.* [A Github token with public_repo scope.](https://github.com/settings/tokens/new?scopes=public_repo)
+-   `github_token`: *Required.* [A Github token with the `admin:repo_hook` scope.](https://github.com/settings/tokens/new?scopes=admin:repo_hook) Additionally, the token's account must [be an administrator of your repo](https://help.github.com/en/articles/managing-an-individuals-access-to-an-organization-repository) to manage the repo's webhooks.
 
 Behavior
 --------

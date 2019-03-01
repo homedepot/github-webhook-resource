@@ -131,8 +131,8 @@ function callGithub(uri, method, githubToken, body) {
             logInfo(`Error while contacting Github: ${err.name}\nResponse Status: ${err.statusCode}, Message: ${err.error}`);
             if (err.statusCode === 404) {
                 logInfo(`Response was 404:\n` +
-                `    Your token's account must have \'Administrator\' access to your repo. ${uri.replace('api.', '').replace('/repos', '').replace('/hooks', '/settings/collaboration')}\n` +
-                `    Additionally, your token must have \'public_repo\' access to your repo. https://github.com/settings/tokens`);
+                `    Your token's account must be an \'Administrator\' of your repo. ${uri.replace('api.', '').replace('/repos', '').replace('/hooks', '/settings/collaboration')}\n` +
+                `    Additionally, your token must have the \'admin:repo_hook\' scope. https://github.com/settings/tokens/new?scopes=admin:repo_hook`);
             }
             process.exit(1);
         });
