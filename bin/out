@@ -27,6 +27,8 @@ stdin.on('end', function () {
         process.exit(1);
     }
 
+    logInfo(JSON.stringify(parsedData));
+
     validateInput(parsedData);
 
     const source = parsedData.source || {};
