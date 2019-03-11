@@ -38,40 +38,31 @@ stdin.on('end', function () {
 });
 
 async function processWebhook(source, params) {
-    const githubApi = source.github_api; 
-    const githubToken = source.github_token;
-    const org = params.org;
-    const repo = params.repo;
-    const events = params.events;
 
-    const operation = params.operation.toLowerCase();
-    const resourceName = params.resource_name;
-    const webhookToken = params.webhook_token;
-    const webhookEndpoint = `${githubApi}/repos/${org}/${repo}/hooks`;
-    logInfo(`Using webhook endpoint: ${webhookEndpoint}`);
+    const webhookEndpoint = `${source.github_api}/repos/${params.org}/${params.repo}/hooks`;
+    const url = encodeURI(`${env.ATC_EXTERNAL_URL}/api/v1/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${params.resource_name}/check/webhook?webhook_token=${params.webhook_token}`);
 
-    let url = `${env.ATC_EXTERNAL_URL}/api/v1/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${resourceName}/check/webhook?webhook_token=${webhookToken}`;
-    let uri = encodeURI(url);
-    logInfo(`Setting Github webhook for ${uri}`);
+    logInfo(`Webhook location: ${webhookEndpoint}\n` +
+            `Target Concourse resource: ${url}\n`);
 
     let config = { 
-        'url': uri,
+        'url': url,
         'content-type': 'json'
     };
     
     let body = {
         'name': 'web',  // NOTE: Github plans to deprecate this field. https://developer.github.com/v3/repos/hooks/#create-a-hook
         'config': config,
-        'events': events
+        'events': params.events
     };
 
-    const existingHookList = await getExistingHooks(webhookEndpoint, githubToken);
+    const existingHookList = await getExistingHooks(webhookEndpoint, source.github_token);
     const existingHook = existingHookList.find(hook => _.isMatch(hook.config, config));
 
-    switch (operation) {
+    switch (params.operation.toLowerCase()) {
         case 'create':
             if (existingHook == null) {
-                createWebhook(webhookEndpoint, 'POST', githubToken, body);
+                createWebhook(webhookEndpoint, 'POST', source.github_token, body);
             } else {
                 logInfo('Webhook already exists');
                 emit(existingHook);
@@ -82,16 +73,16 @@ async function processWebhook(source, params) {
                 logInfo('Webhook does not exist');
                 emit({id: Date.now()});
             } else {
-                deleteWebhook(webhookEndpoint, existingHook, githubToken);
+                deleteWebhook(webhookEndpoint, existingHook, source.github_token);
             }
             break;
     }
-};
+}
 
 function getExistingHooks(webhookEndpoint, githubToken) {
     return callGithub(webhookEndpoint, 'GET', githubToken)
         .then(res => JSON.parse(res.body));
-};
+}
 
 function createWebhook(webhookEndpoint, method, githubToken, body) {
     const bodyString = JSON.stringify(body);
@@ -133,11 +124,13 @@ function callGithub(uri, method, githubToken, body) {
 
     return request(options)
         .catch(err => {
-            logInfo(`Error while contacting Github: ${err.name}\nResponse Status: ${err.statusCode}, Message: ${err.error}`);
+            logInfo(`Error while calling Github: ${err.name}\n` +
+                    `Response Status: ${err.statusCode}\n` +
+                    `Message: ${JSON.stringify(JSON.parse(err.error), null, 2)}`);
             if (err.statusCode === 404) {
                 logInfo(`Response was 404:\n` +
-                `    Your token's account must be an \'Administrator\' of your repo. ${uri.replace('api.', '').replace('/repos', '').replace('/hooks', '/settings/collaboration')}\n` +
-                `    Additionally, your token must have the \'admin:repo_hook\' scope. https://github.com/settings/tokens/new?scopes=admin:repo_hook`);
+                        `    Your token's account must be an \'Administrator\' of your repo. ${uri.replace('api.', '').replace('/repos', '').replace('/hooks', '/settings/collaboration')}\n` +
+                        `    Additionally, your token must have the \'admin:repo_hook\' scope. https://github.com/settings/tokens/new?scopes=admin:repo_hook`);
             }
             process.exit(1);
         });
@@ -148,7 +141,7 @@ function emit(result) {
         version: {
             id: result.id.toString()
         }
-    }
+    };
     logInfo(`Output: ${JSON.stringify(output)}`);
 
     // Output version to Concourse using stdout
