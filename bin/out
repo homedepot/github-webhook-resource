@@ -5,6 +5,7 @@
 
 'use strict';
 
+const _ = require('lodash');
 const request = require('request-promise');
 const validate = require('../src/validate');
 const env = process.env;
@@ -63,7 +64,7 @@ async function processWebhook(source, params) {
     };
 
     const existingHookList = await getExistingHooks(webhookEndpoint, githubToken);
-    const existingHook = existingHookList.find(hook => hook.config.url === uri);
+    const existingHook = existingHookList.find(hook => _.isMatch(hook.config, config));
 
     switch (operation) {
         case 'create':

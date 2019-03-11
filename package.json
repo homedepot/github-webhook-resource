@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "ajv-errors": "^1.0.1",
+    "lodash": "^4.17.11",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
   },
