@@ -32,6 +32,7 @@ const configSchema = {
                 repo:          { type: 'string' },
                 resource_name: { type: 'string' },
                 webhook_token: { type: 'string' },
+                events:        { type: 'array'  },
                 operation:     {
                     type: 'string',
                     enum: validOperations,

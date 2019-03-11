@@ -142,4 +142,34 @@ describe('validate.input', () => {
             expect(() => validate.config(config)).toThrow();
         });
     });
+
+    it('checks fields with array constraint', () => {
+        const constrainedFields = [
+            'params.events'
+        ];
+
+        constrainedFields.forEach(field => {
+            const config = {
+                source: {
+                    github_api: '',
+                    github_token: ''
+                },
+                params: {
+                    org: '',
+                    repo: '',
+                    resource_name: '',
+                    webhook_token: '',
+                    operation: 'create',
+                    events: []
+                }
+            };
+
+            expect(() => validate.config(config)).not.toThrow();
+
+            const fieldTree = field.split('.');
+            config[fieldTree[0]][fieldTree[1]] = null;
+
+            expect(() => validate.config(config)).toThrow();
+        });
+    });
 });

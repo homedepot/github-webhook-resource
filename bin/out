@@ -42,6 +42,7 @@ async function processWebhook(source, params) {
     const githubToken = source.github_token;
     const org = params.org;
     const repo = params.repo;
+    const events = params.events;
 
     const operation = params.operation.toLowerCase();
     const resourceName = params.resource_name;
@@ -60,7 +61,8 @@ async function processWebhook(source, params) {
     
     let body = {
         'name': 'web',  // NOTE: Github plans to deprecate this field. https://developer.github.com/v3/repos/hooks/#create-a-hook
-        'config': config
+        'config': config,
+        'events': events
     };
 
     const existingHookList = await getExistingHooks(webhookEndpoint, githubToken);
