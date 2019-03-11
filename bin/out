@@ -3,9 +3,10 @@
 // Copyright 2018 The Home Depot, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-'use strict'
+'use strict';
 
 const request = require('request-promise');
+const validate = require('../src/validate');
 const env = process.env;
 const stdin = process.stdin;
 
@@ -17,22 +18,20 @@ stdin.on('data', function (chunk) {
 });
 
 stdin.on('end', function () {
-    let inputJSON = inputChunks.join('');
+    let input = inputChunks.join('');
 
-    let parsedData;
+    let resourceConfig;
     try {
-        parsedData = JSON.parse(inputJSON);
+        resourceConfig = JSON.parse(input);
+        validate.env(process.env);
+        validate.config(resourceConfig);
     } catch(error) {
-        logInfo('Error:', error.stack);
+        logInfo(`Error: ${error.message}`);
         process.exit(1);
     }
 
-    logInfo(JSON.stringify(parsedData));
-
-    validateInput(parsedData);
-
-    const source = parsedData.source || {};
-    const params = parsedData.params || {};
+    const source = resourceConfig.source || {};
+    const params = resourceConfig.params || {};
 
     processWebhook(source, params);
 });
@@ -157,33 +156,3 @@ function emit(result) {
 function logInfo(message) {
     console.error(message);
 }
-
-function validateInput(parsedData) {
-    const validOperations = ['create', 'delete'];
-    
-    let isValid = true;
-    isValid = validateItem(isValid, process, 'env', 'ATC_EXTERNAL_URL');
-    isValid = validateItem(isValid, process, 'env', 'BUILD_TEAM_NAME');
-    isValid = validateItem(isValid, process, 'env', 'BUILD_PIPELINE_NAME');
-    isValid = validateItem(isValid, parsedData, 'source', 'github_api');
-    isValid = validateItem(isValid, parsedData, 'source', 'github_token');
-    isValid = validateItem(isValid, parsedData, 'params', 'org');
-    isValid = validateItem(isValid, parsedData, 'params', 'repo');
-    isValid = validateItem(isValid, parsedData, 'params', 'resource_name');
-    isValid = validateItem(isValid, parsedData, 'params', 'webhook_token');
-    isValid = validateItem(isValid, parsedData, 'params', 'operation', validOperations);
-
-    if (!isValid) process.exit(1);
-}
-
-function validateItem(validState, configObject, configItem, property, validValues) {
-
-    if (!configObject[configItem][property]) {
-        console.error(`Invalid configuration: ${configItem}.${property} is required`);
-        return false;
-    } else if (validValues && !validValues.includes(configObject[configItem][property].toLowerCase())) {
-        console.error(`Unsupported configuration: ${configItem}.${property} = ${configObject[configItem][property]}`);
-        return false;
-    }
-    return validState;
-}   
