@@ -121,9 +121,10 @@ function callGithub(uri, method, githubToken, body) {
         method: method,
         body: body,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `token ${githubToken}`,
-          'User-Agent': 'node.js'
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json',
+            'Authorization': `token ${githubToken}`,
+            'User-Agent': 'node.js'
         },
         resolveWithFullResponse: true
     };
