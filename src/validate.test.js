@@ -143,7 +143,7 @@ describe('validate.input', () => {
         });
     });
 
-    it('converts operation to lowercase', () => {
+    it('converts to lowercase', () => {
         const config = {
             source: {
                 github_api: '',
@@ -154,15 +154,17 @@ describe('validate.input', () => {
                 repo: '',
                 resource_name: '',
                 webhook_token: '',
-                operation: 'CrEaTe'
+                operation: 'CrEaTe',
+                events: ['pUsH']
             }
         };
 
         expect(() => validate.config(config)).not.toThrow();
         expect(config.params.operation).toBe('create');
+        expect(config.params.events).toEqual(['push']);
     });
 
-    it('trims whitespace from operation', () => {
+    it('trims whitespace', () => {
         const config = {
             source: {
                 github_api: '',
@@ -173,12 +175,14 @@ describe('validate.input', () => {
                 repo: '',
                 resource_name: '',
                 webhook_token: '',
-                operation: ' create '
+                operation: ' create ',
+                events: [' push ']
             }
         };
 
         expect(() => validate.config(config)).not.toThrow();
         expect(config.params.operation).toBe('create');
+        expect(config.params.events).toEqual(['push']);
     });
 
     it('checks fields with array constraint', () => {

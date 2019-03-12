@@ -33,7 +33,13 @@ const configSchema = {
                 repo:          { type: 'string' },
                 resource_name: { type: 'string' },
                 webhook_token: { type: 'string' },
-                events:        { type: 'array'  },
+                events:        {
+                    type: 'array',
+                    items: {
+                        type: 'string',
+                        transform: ['trim', 'toLowerCase']
+                    }
+                },
                 operation:     {
                     type: 'string',
                     transform: ['trim', 'toEnumCase'],
