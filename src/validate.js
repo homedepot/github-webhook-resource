@@ -1,6 +1,7 @@
 const Ajv = require('ajv');
 const ajv = new Ajv({ allErrors: true, jsonPointers: true });
 require('ajv-errors')(ajv);
+require('ajv-keywords')(ajv, 'transform');
 
 const validOperations = ['create', 'delete'];
 
@@ -35,10 +36,9 @@ const configSchema = {
                 events:        { type: 'array'  },
                 operation:     {
                     type: 'string',
+                    transform: ['trim', 'toEnumCase'],
                     enum: validOperations,
-                    errorMessage: {
-                        enum: 'must be either create or delete'
-                    }
+                    errorMessage: { enum: 'must be either create or delete' }
                 }
             },
             required: ['org', 'repo', 'resource_name', 'webhook_token', 'operation']
@@ -65,8 +65,8 @@ function fail(test) {
 
     test.errors.forEach(err => {
         message += `    ${err.dataPath.replace(/^\//, '')
-                                        .replace(/\//g, '.')
-                                        .replace(/.(\d+$)/, '[$1]')
+                                      .replace(/\//g, '.')
+                                      .replace(/.(\d+$)/, '[$1]')
                         || 'root configuration'} ${err.message}\n`;
     });
 

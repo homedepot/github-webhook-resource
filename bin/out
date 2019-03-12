@@ -59,7 +59,7 @@ async function processWebhook(source, params) {
     const existingHookList = await getExistingHooks(webhookEndpoint, source.github_token);
     const existingHook = existingHookList.find(hook => _.isMatch(hook.config, config));
 
-    switch (params.operation.toLowerCase()) {
+    switch (params.operation) {
         case 'create':
             if (existingHook == null) {
                 createWebhook(webhookEndpoint, 'POST', source.github_token, body);

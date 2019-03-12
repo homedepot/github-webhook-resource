@@ -143,6 +143,44 @@ describe('validate.input', () => {
         });
     });
 
+    it('converts operation to lowercase', () => {
+        const config = {
+            source: {
+                github_api: '',
+                github_token: ''
+            },
+            params: {
+                org: '',
+                repo: '',
+                resource_name: '',
+                webhook_token: '',
+                operation: 'CrEaTe'
+            }
+        };
+
+        expect(() => validate.config(config)).not.toThrow();
+        expect(config.params.operation).toBe('create');
+    });
+
+    it('trims whitespace from operation', () => {
+        const config = {
+            source: {
+                github_api: '',
+                github_token: ''
+            },
+            params: {
+                org: '',
+                repo: '',
+                resource_name: '',
+                webhook_token: '',
+                operation: ' create '
+            }
+        };
+
+        expect(() => validate.config(config)).not.toThrow();
+        expect(config.params.operation).toBe('create');
+    });
+
     it('checks fields with array constraint', () => {
         const constrainedFields = [
             'params.events'
