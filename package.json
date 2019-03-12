@@ -8,8 +8,8 @@
   },
   "scripts": {
     "test": "jest",
-    "debug-out-create": "cat payload-create | node --nolazy --inspect-brk=9229 bin/out",
-    "debug-out-delete": "cat payload-delete | node --nolazy --inspect-brk=9229 bin/out"
+    "debug-out-create": "cat payload-create | node --nolazy --inspect-brk=9229 src/out",
+    "debug-out-delete": "cat payload-delete | node --nolazy --inspect-brk=9229 src/out"
   },
   "license": "ISC",
   "dependencies": {
