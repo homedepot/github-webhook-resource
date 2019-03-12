@@ -47,7 +47,7 @@ Create or delete a webhook using the configured parameters.
     resource_name: your-resource-name
     webhook_token: your-token
     operation: create
-    events: ["push", "*"]
+    events: [push, pull_request]
 ```
 
 -	`org`: *Required.* Your github organization.
