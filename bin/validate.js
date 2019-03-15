@@ -1,3 +1,6 @@
+// Copyright 2018 The Home Depot, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 const Ajv = require('ajv');
 const ajv = new Ajv({ allErrors: true, jsonPointers: true });
 require('ajv-errors')(ajv);

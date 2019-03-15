@@ -1,3 +1,6 @@
+// Copyright 2018 The Home Depot, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 const validate = require('./validate');
 const Combinatorics = require('js-combinatorics');
 
