@@ -65,7 +65,6 @@ function env(env) {
 function config(input) {
     const test = ajv.compile(configSchema);
     const isValid = test(input);
-
     if (!isValid) fail(test);
 }
 
