@@ -62,9 +62,9 @@ function env(env) {
     if (!isValid) fail(test);
 }
 
-function config(input) {
+function config(config) {
     const test = ajv.compile(configSchema);
-    const isValid = test(input);
+    const isValid = test(config);
     if (!isValid) fail(test);
 }
 
