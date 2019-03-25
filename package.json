@@ -4,7 +4,7 @@
   "description": "A Concourse resource for manipulating Github webhooks",
   "repository": {
     "type": "git",
-    "url": "git@github.homedepot.com:gxf2dy6/github-webhook.git"
+    "url": "https://github.com/homedepot/github-webhook-resource.git"
   },
   "scripts": {
     "test": "jest",
