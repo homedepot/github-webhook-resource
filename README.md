@@ -47,6 +47,7 @@ Create or delete a webhook using the configured parameters.
     resource_name: your-resource-name
     webhook_token: your-token
     operation: create
+    events: [push, pull_request]
 ```
 
 -	`org`: *Required.* Your github organization.
@@ -56,6 +57,7 @@ Create or delete a webhook using the configured parameters.
 -	`operation`: *Required.*
     -   `create` to create a new webhook. Ignores pre-existing webhooks.
     -   `delete` to delete an existing webhook. Outputs current timestamp on non-existing webhooks.
+-   `events`: *Optional*. An array of [events](https://developer.github.com/webhooks/#events) which will trigger your webhook. Default: `push`
 
 -----------------------
 

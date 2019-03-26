@@ -4,15 +4,24 @@
   "description": "A Concourse resource for manipulating Github webhooks",
   "repository": {
     "type": "git",
-    "url": "git@github.homedepot.com:gxf2dy6/github-webhook.git"
+    "url": "https://github.com/homedepot/github-webhook-resource.git"
   },
   "scripts": {
+    "test": "jest",
     "debug-out-create": "cat payload-create | node --nolazy --inspect-brk=9229 bin/out",
     "debug-out-delete": "cat payload-delete | node --nolazy --inspect-brk=9229 bin/out"
   },
   "license": "ISC",
   "dependencies": {
+    "ajv": "^6.10.0",
+    "ajv-errors": "^1.0.1",
+    "ajv-keywords": "^3.4.0",
+    "lodash": "^4.17.11",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "jest": "^24.1.0",
+    "js-combinatorics": "^0.5.4"
   }
 }

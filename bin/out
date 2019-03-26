@@ -3,9 +3,11 @@
 // Copyright 2018 The Home Depot, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-'use strict'
+'use strict';
 
+const _ = require('lodash');
 const request = require('request-promise');
+const validate = require('./validate');
 const env = process.env;
 const stdin = process.stdin;
 
@@ -17,88 +19,81 @@ stdin.on('data', function (chunk) {
 });
 
 stdin.on('end', function () {
-    let inputJSON = inputChunks.join('');
+    const input = inputChunks.join('');
 
-    let parsedData;
+    let resourceConfig;
     try {
-        parsedData = JSON.parse(inputJSON);
+        resourceConfig = JSON.parse(input);
+        validate.env(process.env);
+        validate.config(resourceConfig);
     } catch(error) {
-        logInfo('Error:', error.stack);
+        log(`Error: ${error.message}`);
         process.exit(1);
     }
 
-    validateInput(parsedData);
-
-    const source = parsedData.source || {};
-    const params = parsedData.params || {};
+    const source = resourceConfig.source || {};
+    const params = resourceConfig.params || {};
 
     processWebhook(source, params);
 });
 
 async function processWebhook(source, params) {
-    const githubApi = source.github_api; 
-    const githubToken = source.github_token;
-    const org = params.org;
-    const repo = params.repo;
 
-    const operation = params.operation.toLowerCase();
-    const resourceName = params.resource_name;
-    const webhookToken = params.webhook_token;
-    const webhookEndpoint = `${githubApi}/repos/${org}/${repo}/hooks`;
-    logInfo(`Using webhook endpoint: ${webhookEndpoint}`);
+    const webhookEndpoint = `${source.github_api}/repos/${params.org}/${params.repo}/hooks`;
+    const url = encodeURI(`${env.ATC_EXTERNAL_URL}/api/v1/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${params.resource_name}/check/webhook?webhook_token=${params.webhook_token}`);
 
-    let url = `${env.ATC_EXTERNAL_URL}/api/v1/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${resourceName}/check/webhook?webhook_token=${webhookToken}`;
-    let uri = encodeURI(url);
-    logInfo(`Setting Github webhook for ${uri}`);
+    log(`Webhook location: ${webhookEndpoint}\n` +
+        `Target Concourse resource: ${url}\n`);
 
-    let config = { 
-        'url': uri,
+    const config = {
+        'url': url,
         'content-type': 'json'
     };
     
-    let body = {
+    const body = {
         'name': 'web',  // NOTE: Github plans to deprecate this field. https://developer.github.com/v3/repos/hooks/#create-a-hook
-        'config': config
+        'config': config,
+        'events': params.events
     };
 
-    const existingHookList = await getExistingHooks(webhookEndpoint, githubToken);
-    const existingHook = existingHookList.find(hook => hook.config.url === uri);
+    const existingHookList = await getExistingHooks(webhookEndpoint, source.github_token);
+    const existingHook = existingHookList.find(hook => _.isMatch(hook.config, config));
 
-    switch (operation) {
+    switch (params.operation) {
         case 'create':
             if (existingHook == null) {
-                createWebhook(webhookEndpoint, 'POST', githubToken, body);
+                createWebhook(webhookEndpoint, 'POST', source.github_token, body);
             } else {
-                logInfo('Webhook already exists');
+                log('Webhook already exists');
                 emit(existingHook);
             }
             break;
         case 'delete':
             if (existingHook == null) {
-                logInfo('Webhook does not exist');
+                log('Webhook does not exist');
                 emit({id: Date.now()});
             } else {
-                deleteWebhook(webhookEndpoint, existingHook, githubToken);
+                deleteWebhook(webhookEndpoint, existingHook, source.github_token);
             }
             break;
     }
-};
+}
 
 function getExistingHooks(webhookEndpoint, githubToken) {
     return callGithub(webhookEndpoint, 'GET', githubToken)
         .then(res => JSON.parse(res.body));
-};
+}
 
 function createWebhook(webhookEndpoint, method, githubToken, body) {
     const bodyString = JSON.stringify(body);
 
     callGithub(webhookEndpoint, method, githubToken, bodyString)
         .then(res => {
-            logInfo(`Successfully created webhook: ${res.body}`);
+            log(`Successfully created webhook: ${res.body}`);
             emit(JSON.parse(res.body));
         })
         .catch(error => {
-            logInfo(error.stack);
+            log(error.stack);
             process.exit(1);
         });
 }
@@ -108,43 +103,47 @@ function deleteWebhook(webhookEndpoint, webhook, githubToken) {
 
     callGithub(deleteUri, 'DELETE', githubToken)
         .then(() => {
-            logInfo('Webhook deleted successfully');
+            log('Webhook deleted successfully');
             emit(webhook);
         });
 }
 
 function callGithub(uri, method, githubToken, body) {
-    let options = {
+    const options = {
         uri: uri,
         method: method,
         body: body,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `token ${githubToken}`,
-          'User-Agent': 'node.js'
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json',
+            'Authorization': `token ${githubToken}`,
+            'User-Agent': 'node.js'
         },
         resolveWithFullResponse: true
     };
 
     return request(options)
         .catch(err => {
-            logInfo(`Error while contacting Github: ${err.name}\nResponse Status: ${err.statusCode}, Message: ${err.error}`);
+            log(`Error while calling Github: ${err.name}\n` +
+                `Response Status: ${err.statusCode}\n` +
+                `Message: ${JSON.stringify(JSON.parse(err.error), null, 2)}`);
             if (err.statusCode === 404) {
-                logInfo(`Response was 404:\n` +
-                `    Your token's account must be an \'Administrator\' of your repo. ${uri.replace('api.', '').replace('/repos', '').replace('/hooks', '/settings/collaboration')}\n` +
-                `    Additionally, your token must have the \'admin:repo_hook\' scope. https://github.com/settings/tokens/new?scopes=admin:repo_hook`);
+                log(`Response was 404:\n` +
+                    `    Your token's account must be an Administrator of your repo. ${uri.replace('//api.', '//')
+                                                                                          .replace('/repos', '')
+                                                                                          .replace('/hooks', '/settings/collaboration')}\n` +
+                    `    Additionally, your token must have the \'admin:repo_hook\' scope. https://github.com/settings/tokens/new?scopes=admin:repo_hook`);
             }
             process.exit(1);
         });
 }
 
 function emit(result) {
-    let output = {
+    const output = {
         version: {
             id: result.id.toString()
         }
-    }
-    logInfo(`Output: ${JSON.stringify(output)}`);
+    };
 
     // Output version to Concourse using stdout
     console.log(JSON.stringify(output, null, 2));
@@ -152,36 +151,7 @@ function emit(result) {
     process.exit(0);
 }
 
-function logInfo(message) {
+function log(message) {
+    // Concourse only prints stderr to user
     console.error(message);
 }
-
-function validateInput(parsedData) {
-    const validOperations = ['create', 'delete'];
-    
-    let isValid = true;
-    isValid = validateItem(isValid, process, 'env', 'ATC_EXTERNAL_URL');
-    isValid = validateItem(isValid, process, 'env', 'BUILD_TEAM_NAME');
-    isValid = validateItem(isValid, process, 'env', 'BUILD_PIPELINE_NAME');
-    isValid = validateItem(isValid, parsedData, 'source', 'github_api');
-    isValid = validateItem(isValid, parsedData, 'source', 'github_token');
-    isValid = validateItem(isValid, parsedData, 'params', 'org');
-    isValid = validateItem(isValid, parsedData, 'params', 'repo');
-    isValid = validateItem(isValid, parsedData, 'params', 'resource_name');
-    isValid = validateItem(isValid, parsedData, 'params', 'webhook_token');
-    isValid = validateItem(isValid, parsedData, 'params', 'operation', validOperations);
-
-    if (!isValid) process.exit(1);
-}
-
-function validateItem(validState, configObject, configItem, property, validValues) {
-
-    if (!configObject[configItem][property]) {
-        console.error(`Invalid configuration: ${configItem}.${property} is required`);
-        return false;
-    } else if (validValues && !validValues.includes(configObject[configItem][property].toLowerCase())) {
-        console.error(`Unsupported configuration: ${configItem}.${property} = ${configObject[configItem][property]}`);
-        return false;
-    }
-    return validState;
-}   
