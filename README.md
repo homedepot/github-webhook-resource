@@ -59,6 +59,11 @@ Create or delete a webhook using the configured parameters.
     -   `delete` to delete an existing webhook. Outputs current timestamp on non-existing webhooks.
 -   `events`: *Optional*. An array of [events](https://developer.github.com/webhooks/#events) which will trigger your webhook. Default: `push`
 
+
+## License
+
+This project is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) - see the [LICENSE.md](LICENSE.md) file for details.
+
 -----------------------
 
 References:
