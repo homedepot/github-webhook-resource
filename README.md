@@ -101,9 +101,9 @@ resources:
   ...
 ```
 
------------------------
-
-References:
+## Reference
   - https://help.github.com/articles/about-webhooks/
   - https://developer.github.com/webhooks/creating/
   - https://developer.github.com/v3/repos/hooks/
+
+[Concourse Community Resources](https://concourse-ci.org/community.html)
