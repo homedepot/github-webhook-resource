@@ -6,9 +6,7 @@ If you're just looking for quick feedback for an idea or proposal, feel free to 
 [issue](https://github.com/homedepot/github-webhook-resource/issues/new).
 
 Follow the [contribution workflow](#contribution-workflow) for submitting your
-changes to the Github-Webhook-Resource codebase. If you want to receive high-level but still
-commit-based feedback for a contribution, follow the
-[request for comments](#request-for-comments) steps instead.
+changes to the Github-Webhook-Resource codebase.
 
 ## Contribution Workflow
 
