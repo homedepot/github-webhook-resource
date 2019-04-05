@@ -105,8 +105,7 @@ resources:
 Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file to learn the process for submitting changes to this repo.
 
 ## Reference
-  - https://help.github.com/articles/about-webhooks/
-  - https://developer.github.com/webhooks/creating/
-  - https://developer.github.com/v3/repos/hooks/
-
-[Concourse Community Resources](https://concourse-ci.org/community.html)
+- [Implementing a Concourse Resource](https://concourse-ci.org/implementing-resources.html)
+- [What is a Webhook?](https://help.github.com/articles/about-webhooks/)
+- [GitHub's Webhook REST API](https://developer.github.com/v3/repos/hooks/)
+- [Concourse Community Resources](https://concourse-ci.org/community.html)
