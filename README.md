@@ -1,7 +1,7 @@
 Github Webhook Resource
 ===================================
 
-This resource creates and deletes Github webhooks which point to resources in a Concourse pipeline. The github-webhook-resource can only manipulate webhooks which point to other resources in its containing pipeline.
+By default, Concourse will clone your `git` resources once per minute to see if they have updated. In order to reduce excessive clones, you must configure webhooks to trigger Concourse externally. This resource automatically configures your GitHub respoitories to send webhooks to your Concourse pipeline the instant a change happens.
 
 Resource Type Configuration
 ---------------------------
