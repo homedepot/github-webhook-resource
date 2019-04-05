@@ -68,6 +68,9 @@ This project is licensed under [Apache 2.0](https://www.apache.org/licenses/LICE
 - [Node.js](https://nodejs.org/)
 - [Docker](https://www.docker.com/)
 
+### Making changes
+The Concourse entrypoints are in `bin/check`, `bin/in`, and `bin/out`. You can add functionality to these files directly, or you can `require` additional supporing files.
+
 ### Running the tests
 ```
 npm install
