@@ -12,7 +12,7 @@ resource_types:
   type: docker-image
   source:
     repository: homedepottech/github-webhook-resource
-    tag: 'latest'
+    tag: latest
 ```
 Source Configuration
 --------------------
@@ -59,10 +59,47 @@ Create or delete a webhook using the configured parameters.
     -   `delete` to delete an existing webhook. Outputs current timestamp on non-existing webhooks.
 -   `events`: *Optional*. An array of [events](https://developer.github.com/webhooks/#events) which will trigger your webhook. Default: `push`
 
-
 ## License
 
 This project is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) - see the [LICENSE.md](LICENSE.md) file for details.
+
+## Development
+### Prerequisites
+- [Node.js](https://nodejs.org/)
+- [Docker](https://www.docker.com/)
+
+### Running the tests
+```
+npm install
+npm test
+```
+Before submitting your changes for review, ensure all tests are passing.
+
+### Building your changes
+```
+docker build -t github-webhook-resource .
+```
+
+To use the newly built image, push it to a Docker repository which your Concourse pipeline can access and configure your pipeline to use it:
+
+```
+docker tag github-webhook-resource example.com/github-webhook-resource
+docker push example.com/github-webhook-resource
+```
+
+```yaml
+resource_types:
+- name: github-webhook-resource
+  type: docker-image
+  source:
+    repository: example.com/github-webhook-resource
+    tag: latest
+
+resources:
+- name: github-webhook
+  type: github-webhook-resource
+  ...
+```
 
 -----------------------
 
