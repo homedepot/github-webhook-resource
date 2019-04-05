@@ -101,6 +101,9 @@ resources:
   ...
 ```
 
+### Contributing
+Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file to learn the process for submitting changes to this repo.
+
 ## Reference
   - https://help.github.com/articles/about-webhooks/
   - https://developer.github.com/webhooks/creating/
