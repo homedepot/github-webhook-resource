@@ -7,6 +7,7 @@
     "url": "https://github.com/homedepot/github-webhook-resource.git"
   },
   "scripts": {
+    "pretest": "eslint --ignore-path .gitignore . && eslint bin/out",
     "test": "jest",
     "debug-out-create": "cat payload-create | node --nolazy --inspect-brk=9229 bin/out",
     "debug-out-delete": "cat payload-delete | node --nolazy --inspect-brk=9229 bin/out"
@@ -21,6 +22,7 @@
     "request-promise": "^4.2.2"
   },
   "devDependencies": {
+    "eslint": "^5.16.0",
     "jest": "^24.1.0",
     "js-combinatorics": "^0.5.4"
   }
