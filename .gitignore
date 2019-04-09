@@ -2,6 +2,7 @@
 .history/
 .idea/
 node_modules/
+coverage/
 
 payload*
 .DS_Store
