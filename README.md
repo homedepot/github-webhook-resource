@@ -59,10 +59,6 @@ Create or delete a webhook using the configured parameters.
     -   `delete` to delete an existing webhook. Outputs current timestamp on non-existing webhooks.
 -   `events`: *Optional*. An array of [events](https://developer.github.com/webhooks/#events) which will trigger your webhook. Default: `push`
 
-## License
-
-This project is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) - see the [LICENSE.md](LICENSE.md) file for details.
-
 ## Development
 ### Prerequisites
 - [Node.js](https://nodejs.org/)
@@ -70,6 +66,8 @@ This project is licensed under [Apache 2.0](https://www.apache.org/licenses/LICE
 
 ### Making changes
 The Concourse entrypoints are in `bin/check`, `bin/in`, and `bin/out`. You can add functionality to these files directly, or you can `require` additional supporing files.
+
+See the [Reference](#Reference) section for some helpful information related to this project's implementation.
 
 ### Running the tests
 ```
@@ -106,6 +104,10 @@ resources:
 
 ### Contributing
 Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file to learn the process for submitting changes to this repo.
+
+## License
+
+This project is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) - see the [LICENSE](LICENSE) file for details.
 
 ## Reference
 - [Implementing a Concourse Resource](https://concourse-ci.org/implementing-resources.html)
