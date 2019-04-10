@@ -6,3 +6,4 @@ coverage/
 
 payload*
 .DS_Store
+.coveralls.yml

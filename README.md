@@ -1,6 +1,8 @@
 Github Webhook Resource
 ===================================
 
+[![Coverage Status](https://coveralls.io/repos/github/homedepot/github-webhook-resource/badge.svg?branch=master)](https://coveralls.io/github/homedepot/github-webhook-resource?branch=master)
+
 By default, Concourse will clone your `git` resources once per minute to see if they have updated. In order to reduce excessive clones, you must configure webhooks to trigger Concourse externally. This resource automatically configures your GitHub respoitories to send webhooks to your Concourse pipeline the instant a change happens.
 
 Resource Type Configuration
