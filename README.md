@@ -72,20 +72,20 @@ The Concourse entrypoints are in `bin/check`, `bin/in`, and `bin/out`. You can a
 See the [Reference](#Reference) section for some helpful information related to this project's implementation.
 
 ### Running the tests
-```
+```shell
 npm install
 npm test
 ```
 Before submitting your changes for review, ensure all tests are passing.
 
 ### Building your changes
-```
+```shell
 docker build -t github-webhook-resource .
 ```
 
 To use the newly built image, push it to a Docker repository which your Concourse pipeline can access and configure your pipeline to use it:
 
-```
+```shell
 docker tag github-webhook-resource example.com/github-webhook-resource
 docker push example.com/github-webhook-resource
 ```
