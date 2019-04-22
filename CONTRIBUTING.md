@@ -34,5 +34,4 @@ Your contribution needs to meet the following standards:
   [commit message best practices](https://github.com/erlang/otp/wiki/writing-good-commit-messages).
 - Document your pull requests. Include the reasoning behind each change, and
   the testing done.
-- Acknowledge the [Apache 2.0 license](LICENSE). Ensure that every file in your pull request has a
-  header referring to the repository license file.
+- Acknowledge the [Apache 2.0 license](LICENSE).
