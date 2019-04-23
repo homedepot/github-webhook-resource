@@ -125,9 +125,11 @@ function callGithub(uri, method, githubToken, body) {
                 `Response Status: ${err.statusCode}\n` +
                 `Message: ${JSON.stringify(JSON.parse(err.error), null, 2)}`);
             if (err.statusCode === 404) {
-                logInfo(`Response was 404:\n` +
-                        `    Your token's account must be an 'Administrator' of your repo. ${uri.replace('api.', '').replace('/repos', '').replace('/hooks', '/settings/collaboration')}\n` +
-                        `    Additionally, your token must have the 'admin:repo_hook' scope. https://github.com/settings/tokens/new?scopes=admin:repo_hook`);
+                log(`Response was 404:\n` +
+                    `    Your token's account must be an Administrator of your repo. ${uri.replace('//api.', '//')
+                                                                                          .replace('/repos', '')
+                                                                                          .replace('/hooks', '/settings/collaboration')}\n` +
+                    `    Additionally, your token must have the 'admin:repo_hook' scope. https://github.com/settings/tokens/new?scopes=admin:repo_hook`);
             }
             process.exit(1);
         });
