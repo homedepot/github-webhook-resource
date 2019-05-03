@@ -1,3 +1,10 @@
+<!--
+    Make sure your pull request is ready:
+    - Read the contributing guidelines: https://github.com/homedepot/github-webhook-resource/blob/master/CONTRIBUTING.md
+    - Include tests for this change
+    - Update documentation to reflect this change (if appropriate)
+-->
+
 **What is the purpose of this pull request?**
 <!-- Remove the empty space and paste an "X" inside the [] next to the correct item. -->
 - [ ] Bug fix
@@ -14,10 +21,3 @@
 
 
 **Is there anything specific you would like reviewers to focus on?**
-
-<!--
-    Make sure your pull request is ready:
-    - Read the contributing guidelines: https://github.com/homedepot/github-webhook-resource/blob/master/CONTRIBUTING.md
-    - Include tests for this change
-    - Update documentation to reflect this change (if appropriate)
--->
