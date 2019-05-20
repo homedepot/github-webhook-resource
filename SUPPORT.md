@@ -5,4 +5,4 @@ If you encounter a bug with the *github-webhook-resource*, please [file an issue
 If you would like to contribute to the project, please read the [CONTRIBUTING](CONTRIBUTING.md) file.
 
 # Contact us
-`github-webhook-resource@homedepot.com?`
+Reach out to one of our [MAINTAINERS.](MAINTAINERS.md)
