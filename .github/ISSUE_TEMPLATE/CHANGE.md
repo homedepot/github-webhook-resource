@@ -19,4 +19,4 @@ assignees: ''
 **Your take on the correct solution to problem:**
 
 
-**Are you willing to submit a pull request to implement this change?**
+**Do you plan to submit a pull request to implement this change?**

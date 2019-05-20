@@ -15,4 +15,4 @@
 **What did you expect to happen?**
 
 
-**What actually happened? Please include the raw output from the github-webhook-resource in your pipeline.**
+**What actually happened? Please include your pipeline's raw output from the github-webhook-resource.**
