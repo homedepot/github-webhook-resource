@@ -1,7 +1,9 @@
 Github Webhook Resource
 ===================================
 
-This resource creates and deletes Github webhooks which point to resources in a Concourse pipeline. The github-webhook-resource can only manipulate webhooks which point to other resources in its containing pipeline.
+[![Build Status](https://travis-ci.org/homedepot/github-webhook-resource.svg?branch=master)](https://travis-ci.org/homedepot/github-webhook-resource) [![Coverage Status](https://coveralls.io/repos/github/homedepot/github-webhook-resource/badge.svg?branch=master)](https://coveralls.io/github/homedepot/github-webhook-resource?branch=master)
+
+By default, Concourse will `check` your resources once per minute to see if they have updated. In order to reduce excessive `checks`, you must configure webhooks to trigger Concourse externally. This resource automatically configures your GitHub respoitories to send webhooks to your Concourse pipeline the instant a change happens.
 
 Resource Type Configuration
 ---------------------------
@@ -12,7 +14,7 @@ resource_types:
   type: docker-image
   source:
     repository: homedepottech/github-webhook-resource
-    tag: 'latest'
+    tag: latest
 ```
 Source Configuration
 --------------------
@@ -59,9 +61,57 @@ Create or delete a webhook using the configured parameters.
     -   `delete` to delete an existing webhook. Outputs current timestamp on non-existing webhooks.
 -   `events`: *Optional*. An array of [events](https://developer.github.com/webhooks/#events) which will trigger your webhook. Default: `push`
 
------------------------
+## Development
+### Prerequisites
+- [Node.js](https://nodejs.org/)
+- [Docker](https://www.docker.com/)
 
-References:
-  - https://help.github.com/articles/about-webhooks/
-  - https://developer.github.com/webhooks/creating/
-  - https://developer.github.com/v3/repos/hooks/
+### Making changes
+The Concourse entrypoints are in `bin/check`, `bin/in`, and `bin/out`. You can add functionality to these files directly, or you can `require` additional supporing files.
+
+See the [Reference](#Reference) section for some helpful information related to this project's implementation.
+
+### Running the tests
+```shell
+npm install
+npm test
+```
+Before submitting your changes for review, ensure all tests are passing.
+
+### Building your changes
+```shell
+docker build -t github-webhook-resource .
+```
+
+To use the newly built image, push it to a Docker repository which your Concourse pipeline can access and configure your pipeline to use it:
+
+```shell
+docker tag github-webhook-resource example.com/github-webhook-resource
+docker push example.com/github-webhook-resource
+```
+
+```yaml
+resource_types:
+- name: github-webhook-resource
+  type: docker-image
+  source:
+    repository: example.com/github-webhook-resource
+    tag: latest
+
+resources:
+- name: github-webhook
+  type: github-webhook-resource
+  ...
+```
+
+### Contributing
+Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file to learn the process for submitting changes to this repo.
+
+## License
+This project is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) - see the [LICENSE](LICENSE) file for details.
+
+## Reference
+- [Implementing a Concourse Resource](https://concourse-ci.org/implementing-resources.html)
+- [What is a Webhook?](https://help.github.com/articles/about-webhooks/)
+- [GitHub's Webhook REST API](https://developer.github.com/v3/repos/hooks/)
+- [Concourse Community Resources](https://concourse-ci.org/community.html)

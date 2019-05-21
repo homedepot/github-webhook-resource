@@ -1,8 +1,5 @@
 #!/usr/bin/env node
 
-// Copyright 2018 The Home Depot, Inc. or its affiliates. All Rights Reserved.
-// SPDX-License-Identifier: Apache-2.0
-
 'use strict';
 
 const _ = require('lodash');
@@ -132,7 +129,7 @@ function callGithub(uri, method, githubToken, body) {
                     `    Your token's account must be an Administrator of your repo. ${uri.replace('//api.', '//')
                                                                                           .replace('/repos', '')
                                                                                           .replace('/hooks', '/settings/collaboration')}\n` +
-                    `    Additionally, your token must have the \'admin:repo_hook\' scope. https://github.com/settings/tokens/new?scopes=admin:repo_hook`);
+                    `    Additionally, your token must have the 'admin:repo_hook' scope. https://github.com/settings/tokens/new?scopes=admin:repo_hook`);
             }
             process.exit(1);
         });

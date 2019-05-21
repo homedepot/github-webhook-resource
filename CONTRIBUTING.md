@@ -6,9 +6,7 @@ If you're just looking for quick feedback for an idea or proposal, feel free to 
 [issue](https://github.com/homedepot/github-webhook-resource/issues/new).
 
 Follow the [contribution workflow](#contribution-workflow) for submitting your
-changes to the Github-Webhook-Resource codebase. If you want to receive high-level but still
-commit-based feedback for a contribution, follow the
-[request for comments](#request-for-comments) steps instead.
+changes to the Github-Webhook-Resource codebase.
 
 ## Contribution Workflow
 
@@ -36,5 +34,4 @@ Your contribution needs to meet the following standards:
   [commit message best practices](https://github.com/erlang/otp/wiki/writing-good-commit-messages).
 - Document your pull requests. Include the reasoning behind each change, and
   the testing done.
-- Acknowledge the [Apache 2.0 license](LICENSE). Ensure that every file in your pull request has a
-  header referring to the repository license file.
+- Acknowledge the [Apache 2.0 license](LICENSE).
