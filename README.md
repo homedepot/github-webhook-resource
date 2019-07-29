@@ -111,7 +111,7 @@ Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file to learn the process for
 This project is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) - see the [LICENSE](LICENSE) file for details.
 
 ## Reference
-- [Implementing a Concourse Resource](https://concourse-ci.org/implementing-resources.html)
+- [Implementing a Concourse Resource](https://concourse-ci.org/implementing-resource-types.html)
 - [What is a Webhook?](https://help.github.com/articles/about-webhooks/)
 - [GitHub's Webhook REST API](https://developer.github.com/v3/repos/hooks/)
-- [Concourse Community Resources](https://concourse-ci.org/community.html)
+- [Concourse Community Resources](https://github.com/concourse/concourse/wiki/Resource-Types)
