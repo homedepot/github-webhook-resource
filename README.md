@@ -1,7 +1,7 @@
 Github Webhook Resource
 ===================================
 
-[![Build Status](https://travis-ci.org/homedepot/github-webhook-resource.svg?branch=master)](https://travis-ci.org/homedepot/github-webhook-resource) [![Coverage Status](https://coveralls.io/repos/github/homedepot/github-webhook-resource/badge.svg?branch=master)](https://coveralls.io/github/homedepot/github-webhook-resource?branch=master)
+[![Build Status](https://travis-ci.org/homedepot/github-webhook-resource.svg?branch=master)](https://travis-ci.org/homedepot/github-webhook-resource) [![Coverage Status](https://coveralls.io/repos/github/homedepot/github-webhook-resource/badge.svg?branch=master)](https://coveralls.io/github/homedepot/github-webhook-resource?branch=master) [![Docker Pulls](https://img.shields.io/docker/pulls/homedepottech/github-webhook-resource.svg)](https://hub.docker.com/r/homedepottech/github-webhook-resource)
 
 By default, Concourse will `check` your resources once per minute to see if they have updated. In order to reduce excessive `checks`, you must configure webhooks to trigger Concourse externally. This resource automatically configures your GitHub respoitories to send webhooks to your Concourse pipeline the instant a change happens.
 
