@@ -60,6 +60,8 @@ async function processWebhook(source, params) {
         case 'create':
             if (existingHook == null) {
                 createWebhook(webhookEndpoint, 'POST', source.github_token, body);
+            } else if (existingHook.events !== body.events) {
+                updateWebhook(`${webhookEndpoint}/${existingHook.id}`, 'PATCH', source.github_token, body)
             } else {
                 log('Webhook already exists');
                 emit(existingHook);
@@ -87,6 +89,20 @@ function createWebhook(webhookEndpoint, method, githubToken, body) {
     callGithub(webhookEndpoint, method, githubToken, bodyString)
         .then(res => {
             log(`Successfully created webhook: ${res.body}`);
+            emit(JSON.parse(res.body));
+        })
+        .catch(error => {
+            log(error.stack);
+            process.exit(1);
+        });
+}
+
+function updateWebhook(webhookEndpoint, method, githubToken, body) {
+    const bodyString = JSON.stringify(body);
+
+    callGithub(webhookEndpoint, method, githubToken, bodyString)
+        .then(res => {
+            log(`Successfully updated webhook: ${res.body}`);
             emit(JSON.parse(res.body));
         })
         .catch(error => {
