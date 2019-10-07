@@ -57,7 +57,7 @@ Create or delete a webhook using the configured parameters.
 -	`resource_name`: *Required.* Name of the resource to be associated with your webhook.
 -	`webhook_token`: *Required.* Arbitrary string to identify your webhook. Must match the `webhook_token` property of the resource your webhook points to.
 -	`operation`: *Required.*
-    -   `create` to create a new webhook. Ignores pre-existing webhooks.
+    -   `create` to create a new webhook. Updates existing webhook if your configuration differs from remote.
     -   `delete` to delete an existing webhook. Outputs current timestamp on non-existing webhooks.
 -   `events`: *Optional*. An array of [events](https://developer.github.com/webhooks/#events) which will trigger your webhook. Default: `push`
 
