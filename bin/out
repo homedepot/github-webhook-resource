@@ -31,6 +31,9 @@ stdin.on('end', function () {
     const source = resourceConfig.source || {};
     const params = resourceConfig.params || {};
 
+    // Remove duplicates
+    params.events = [...new Set(params.events)];
+
     processWebhook(source, params);
 });
 
