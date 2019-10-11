@@ -31,6 +31,9 @@ stdin.on('end', function () {
     const source = resourceConfig.source || {};
     const params = resourceConfig.params || {};
 
+    // Remove duplicates
+    params.events = [...new Set(params.events)];
+
     processWebhook(source, params);
 });
 
@@ -60,7 +63,7 @@ async function processWebhook(source, params) {
         case 'create':
             if (existingHook == null) {
                 createWebhook(webhookEndpoint, 'POST', source.github_token, body);
-            } else if (existingHook.events !== body.events) {
+            } else if (!_.isEqual(_.sortBy(existingHook.events), _.sortBy(body.events))) {
                 updateWebhook(`${webhookEndpoint}/${existingHook.id}`, 'PATCH', source.github_token, body)
             } else {
                 log('Webhook already exists');
