@@ -64,7 +64,7 @@ async function processWebhook(source, params) {
             if (existingHook == null) {
                 createWebhook(webhookEndpoint, 'POST', source.github_token, body);
             } else if (!_.isEqual(_.sortBy(existingHook.events), _.sortBy(body.events))) {
-                updateWebhook(`${webhookEndpoint}/${existingHook.id}`, 'PATCH', source.github_token, body)
+                updateWebhook(`${webhookEndpoint}/${existingHook.id}`, 'PATCH', source.github_token, body, existingHook)
             } else {
                 log('Webhook already exists');
                 emit(existingHook);
@@ -100,12 +100,12 @@ function createWebhook(webhookEndpoint, method, githubToken, body) {
         });
 }
 
-function updateWebhook(webhookEndpoint, method, githubToken, body) {
+function updateWebhook(webhookEndpoint, method, githubToken, body, existingHook) {
     const bodyString = JSON.stringify(body);
 
     callGithub(webhookEndpoint, method, githubToken, bodyString)
         .then(res => {
-            log(`Successfully updated webhook: ${res.body}`);
+            log(`Successfully updated webhook configuration from:\n${JSON.stringify(existingHook)}\n\nto:\n${res.body}`);
             emit(JSON.parse(res.body));
         })
         .catch(error => {
