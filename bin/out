@@ -31,6 +31,10 @@ stdin.on('end', function () {
     const source = resourceConfig.source || {};
     const params = resourceConfig.params || {};
 
+    if (params.events === undefined) {
+        params.events = ['push']
+    }
+
     // Remove duplicates
     params.events = [...new Set(params.events)];
 
