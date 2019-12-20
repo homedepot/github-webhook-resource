@@ -36,7 +36,7 @@ Behavior
 
 ### `out`: Manipulate a Github webhook
 
-Create or delete a webhook using the configured parameters.
+Modify a webhook using the configured parameters.
 
 #### Parameters
 
