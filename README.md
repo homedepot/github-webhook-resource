@@ -3,7 +3,7 @@ Github Webhook Resource
 
 [![Build Status](https://travis-ci.org/homedepot/github-webhook-resource.svg?branch=master)](https://travis-ci.org/homedepot/github-webhook-resource) [![Docker Pulls](https://img.shields.io/docker/pulls/homedepottech/github-webhook-resource.svg)](https://hub.docker.com/r/homedepottech/github-webhook-resource)
 
-Manages webhook configurations on GitHub.com and GitHub Enterprise deployments.
+A [Concourse](https://concourse-ci.org/) resource which manages webhook configurations on GitHub.com and GitHub Enterprise deployments.
 
 Resource Type Configuration
 ---------------------------
