@@ -24,7 +24,7 @@ resources:
 - name: github-webhook
   type: github-webhook-resource
   source:
-    github_api: https://github.example.com/api
+    github_api: https://api.github.com/
     github_token: ((github-token))
 ```
 
