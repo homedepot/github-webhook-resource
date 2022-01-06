@@ -58,6 +58,7 @@ function buildInstanceVariables() {
     }
     return vars;
 }
+
 async function processWebhook(source, params) {
 
     const webhookEndpoint = `${source.github_api}/repos/${params.org}/${params.repo}/hooks`;
@@ -192,3 +193,5 @@ function log(message) {
     // Concourse only prints stderr to user
     console.error(message);
 }
+
+module.exports = { buildInstanceVariables };

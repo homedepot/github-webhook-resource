@@ -34,7 +34,7 @@ resources:
 Behavior
 --------
 
-### `out`: Manipulate a Github webhook
+### `out.js`: Manipulate a Github webhook
 
 Create or delete a webhook using the configured parameters.
 
@@ -67,7 +67,7 @@ Create or delete a webhook using the configured parameters.
 - [Docker](https://www.docker.com/)
 
 ### Making changes
-The Concourse entrypoints are in `bin/check`, `bin/in`, and `bin/out`. You can add functionality to these files directly, or you can `require` additional supporing files.
+The Concourse entrypoints are in `bin/check`, `bin/in`, and `bin/out.js`. You can add functionality to these files directly, or you can `require` additional supporing files.
 
 See the [Reference](#Reference) section for some helpful information related to this project's implementation.
 
