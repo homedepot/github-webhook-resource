@@ -10,7 +10,8 @@ const envSchema = {
     properties: {
         ATC_EXTERNAL_URL:    { type: 'string' },
         BUILD_TEAM_NAME:     { type: 'string' },
-        BUILD_PIPELINE_NAME: { type: 'string' }
+        BUILD_PIPELINE_NAME: { type: 'string' },
+        BUILD_PIPELINE_INSTANCE_VARS: { type: 'string' }
     },
     required: ['ATC_EXTERNAL_URL', 'BUILD_TEAM_NAME', 'BUILD_PIPELINE_NAME']
 };

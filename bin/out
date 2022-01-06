@@ -41,10 +41,27 @@ stdin.on('end', function () {
     processWebhook(source, params);
 });
 
+function buildUrl(source, params) {
+    const instanceVars = buildInstanceVariables();
+    return encodeURI(`${env.ATC_EXTERNAL_URL}/api/v1/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${params.resource_name}/check/webhook?webhook_token=${params.webhook_token}${instanceVars}`);
+}
+
+function buildInstanceVariables() {
+    let vars = "";
+    try {
+        const instanceVars = JSON.parse(env.BUILD_PIPELINE_INSTANCE_VARS)
+        for (const [key, value] of Object.entries(instanceVars)) {
+            vars += `&vars.${key}="${value}"`;
+        }
+    } catch(exception) {
+        log(`Exception building instance variable: ${exception}`)
+    }
+    return vars;
+}
 async function processWebhook(source, params) {
 
     const webhookEndpoint = `${source.github_api}/repos/${params.org}/${params.repo}/hooks`;
-    const url = encodeURI(`${env.ATC_EXTERNAL_URL}/api/v1/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${params.resource_name}/check/webhook?webhook_token=${params.webhook_token}`);
+    const url = buildUrl(source, params)
 
     log(`Webhook location: ${webhookEndpoint}\n` +
         `Target Concourse resource: ${url}\n`);
@@ -53,7 +70,7 @@ async function processWebhook(source, params) {
         'url': url,
         'content-type': 'json'
     };
-    
+
     const body = {
         'name': 'web',  // NOTE: Github plans to deprecate this field. https://developer.github.com/v3/repos/hooks/#create-a-hook
         'config': config,
