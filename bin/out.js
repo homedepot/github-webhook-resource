@@ -54,7 +54,7 @@ function buildInstanceVariables() {
             vars += `&vars.${key}="${value}"`;
         }
     } catch(exception) {
-        log(`Exception building instance variable: ${exception}`)
+        throw new Error(exception);
     }
     return vars;
 }

@@ -34,7 +34,7 @@ resources:
 Behavior
 --------
 
-### `out.js`: Manipulate a Github webhook
+### `out`: Manipulate a Github webhook
 
 Create or delete a webhook using the configured parameters.
 
@@ -61,7 +61,41 @@ Create or delete a webhook using the configured parameters.
     -   `delete` to delete an existing webhook. Outputs current timestamp on non-existing webhooks.
 -   `events`: *Optional*. An array of [events](https://developer.github.com/webhooks/#events) which will trigger your webhook. Default: `push`
 
+## Example
+Include the github-webhook-resource in your pipeline.yml file
+
+```yaml
+resource_types:
+  - name: github-webhook-resource
+    type: docker-image
+    source:
+      repository: homedepottech/github-webhook-resource
+      tag: latest 
+```
+
+Now when you set your pipeline, you can optionally include instance variables that will be picked up by the resource. Here is a sample script that sets the pipeline for you. 
+
+```yaml
+#!/bin/sh
+
+if [ "$#" -lt 1 ]; then
+echo "Unable to parse target. Run fly targets to check for what this could be."
+exit -1
+fi
+
+env="dev"
+if [ "$#" -eq 2 ]; then
+env=$2
+fi
+
+
+fly -t "$1" sp -c ./ci/pipelines/"$env"-pipeline.yml -p scheduler-ui -v aws-region=us-east-1 --instance-var pipeline-env="$env"
+
+
+```
+
 ## Development
+
 ### Prerequisites
 - [Node.js](https://nodejs.org/)
 - [Docker](https://www.docker.com/)
