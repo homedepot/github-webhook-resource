@@ -75,21 +75,10 @@ resource_types:
 
 Now when you set your pipeline, you can optionally include instance variables that will be picked up by the resource. Here is a sample script that sets the pipeline for you. 
 
-```yaml
+```bash
 #!/bin/sh
 
-if [ "$#" -lt 1 ]; then
-echo "Unable to parse target. Run fly targets to check for what this could be."
-exit -1
-fi
-
-env="dev"
-if [ "$#" -eq 2 ]; then
-env=$2
-fi
-
-
-fly -t "$1" sp -c ./ci/pipelines/"$env"-pipeline.yml -p scheduler-ui -v aws-region=us-east-1 --instance-var pipeline-env="$env"
+fly -t {your team name} sp -c pipeline.yml -p {your pipeline name} --instance-var {you instance variables}
 
 
 ```
