@@ -17,6 +17,10 @@ stdin.on('data', function (chunk) {
 
 stdin.on('end', function () {
     const input = inputChunks.join('');
+    if (!input) {
+        log('STDIN ended with empty input. Exiting.')
+        return;
+    }
 
     let resourceConfig;
     try {
