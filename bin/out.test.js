@@ -13,7 +13,13 @@ describe('buildInstanceVaribles', () => {
         process.env = OLD_ENV;
     });
 
-    it('with no variables, returns empty string', () => {
+    it('with unset variables, returns empty string', () => {
+        delete process.env.BUILD_PIPELINE_INSTANCE_VARS;
+        const instanceVar = out.buildInstanceVariables();
+        expect(instanceVar).toEqual('')
+    });
+
+    it('with empty variables, returns empty string', () => {
         process.env.BUILD_PIPELINE_INSTANCE_VARS = "{}";
         const instanceVar = out.buildInstanceVariables();
         expect(instanceVar).toEqual('')

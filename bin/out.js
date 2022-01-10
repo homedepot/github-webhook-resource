@@ -18,7 +18,7 @@ stdin.on('data', function (chunk) {
 stdin.on('end', function () {
     const input = inputChunks.join('');
     if (!input) {
-        log('STDIN ended with empty input. Exiting.')
+        log('STDIN ended with empty input. Exiting.');
         return;
     }
 
@@ -52,13 +52,15 @@ function buildUrl(source, params) {
 
 function buildInstanceVariables() {
     let vars = "";
-    try {
-        const instanceVars = JSON.parse(env.BUILD_PIPELINE_INSTANCE_VARS)
-        for (const [key, value] of Object.entries(instanceVars)) {
-            vars += `&vars.${key}="${value}"`;
+    if (env.BUILD_PIPELINE_INSTANCE_VARS) {
+        try {
+            const instanceVars = JSON.parse(env.BUILD_PIPELINE_INSTANCE_VARS)
+            for (const [key, value] of Object.entries(instanceVars)) {
+                vars += `&vars.${key}="${value}"`;
+            }
+        } catch(exception) {
+            throw new Error(exception);
         }
-    } catch(exception) {
-        throw new Error(exception);
     }
     return vars;
 }
