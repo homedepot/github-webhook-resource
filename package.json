@@ -7,11 +7,11 @@
     "url": "https://github.com/homedepot/github-webhook-resource.git"
   },
   "scripts": {
-    "pretest": "eslint --ignore-path .gitignore . && eslint bin/out",
+    "pretest": "eslint --ignore-path .gitignore . && eslint bin/out.js",
     "test": "jest --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
-    "debug-out-create": "cat payload-create | node --nolazy --inspect-brk=9229 bin/out",
-    "debug-out-delete": "cat payload-delete | node --nolazy --inspect-brk=9229 bin/out"
+    "debug-out-create": "cat payload-create | node --nolazy --inspect-brk=9229 bin/out.js",
+    "debug-out-delete": "cat payload-delete | node --nolazy --inspect-brk=9229 bin/out.js"
   },
   "license": "ISC",
   "dependencies": {

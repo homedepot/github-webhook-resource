@@ -61,13 +61,36 @@ Create or delete a webhook using the configured parameters.
     -   `delete` to delete an existing webhook. Outputs current timestamp on non-existing webhooks.
 -   `events`: *Optional*. An array of [events](https://developer.github.com/webhooks/#events) which will trigger your webhook. Default: `push`
 
+## Example
+Include the github-webhook-resource in your pipeline.yml file
+
+```yaml
+resource_types:
+  - name: github-webhook-resource
+    type: docker-image
+    source:
+      repository: homedepottech/github-webhook-resource
+      tag: latest 
+```
+
+Now when you set your pipeline, you can optionally include instance variables that will be picked up by the resource. Here is a sample script that sets the pipeline for you. 
+
+```bash
+#!/bin/sh
+
+fly -t {your team name} sp -c pipeline.yml -p {your pipeline name} --instance-var {you instance variables}
+
+
+```
+
 ## Development
+
 ### Prerequisites
 - [Node.js](https://nodejs.org/)
 - [Docker](https://www.docker.com/)
 
 ### Making changes
-The Concourse entrypoints are in `bin/check`, `bin/in`, and `bin/out`. You can add functionality to these files directly, or you can `require` additional supporing files.
+The Concourse entrypoints are in `bin/check`, `bin/in`, and `bin/out.js`. You can add functionality to these files directly, or you can `require` additional supporing files.
 
 See the [Reference](#Reference) section for some helpful information related to this project's implementation.
 
