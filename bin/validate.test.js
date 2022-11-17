@@ -117,6 +117,7 @@ describe('validate.input', () => {
             'params.resource_name',
             'params.webhook_token',
             'params.operation',
+            'params.pipeline',
         ];
 
         constrainedFields.forEach(field => {
@@ -155,13 +156,15 @@ describe('validate.input', () => {
                 resource_name: '',
                 webhook_token: '',
                 operation: 'CrEaTe',
-                events: ['pUsH']
+                events: ['pUsH'],
+                pipeline: 'mYPipeline'
             }
         };
 
         expect(() => validate.config(config)).not.toThrow();
         expect(config.params.operation).toBe('create');
         expect(config.params.events).toEqual(['push']);
+        expect(config.params.pipeline).toBe('mypipeline');
     });
 
     it('trims whitespace', () => {
@@ -176,13 +179,15 @@ describe('validate.input', () => {
                 resource_name: '',
                 webhook_token: '',
                 operation: ' create ',
-                events: [' push ']
+                events: [' push '],
+                pipeline: ' mypipeline '
             }
         };
 
         expect(() => validate.config(config)).not.toThrow();
         expect(config.params.operation).toBe('create');
         expect(config.params.events).toEqual(['push']);
+        expect(config.params.pipeline).toBe('mypipeline');
     });
 
     it('checks fields with array constraint', () => {

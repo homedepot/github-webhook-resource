@@ -47,7 +47,7 @@ stdin.on('end', function () {
 
 function buildUrl(source, params) {
     const instanceVars = buildInstanceVariables();
-    return encodeURI(`${env.ATC_EXTERNAL_URL}/api/v1/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${params.resource_name}/check/webhook?webhook_token=${params.webhook_token}${instanceVars}`);
+    return encodeURI(`${env.ATC_EXTERNAL_URL}/api/v1/teams/${env.BUILD_TEAM_NAME}/pipelines/${params.pipeline ? params.pipeline : env.BUILD_PIPELINE_NAME}/resources/${params.resource_name}/check/webhook?webhook_token=${params.webhook_token}${instanceVars}`);
 }
 
 function buildInstanceVariables() {
@@ -200,4 +200,4 @@ function log(message) {
     console.error(message);
 }
 
-module.exports = { buildInstanceVariables };
+module.exports = { buildInstanceVariables, buildUrl };
