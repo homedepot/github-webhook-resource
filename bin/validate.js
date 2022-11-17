@@ -51,6 +51,9 @@ const configSchema = {
                     type: 'string',
                     transform: ['trim', 'toLowerCase']
                 },
+                pipeline_instance_vars: { 
+                    type: 'object',
+                },
             },
             required: ['org', 'repo', 'resource_name', 'webhook_token', 'operation']
         },

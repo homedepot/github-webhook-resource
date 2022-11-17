@@ -157,7 +157,8 @@ describe('validate.input', () => {
                 webhook_token: '',
                 operation: 'CrEaTe',
                 events: ['pUsH'],
-                pipeline: 'mYPipeline'
+                pipeline: 'mYPipeline',
+                pipeline_instance_vars: {}
             }
         };
 
@@ -180,7 +181,8 @@ describe('validate.input', () => {
                 webhook_token: '',
                 operation: ' create ',
                 events: [' push '],
-                pipeline: ' mypipeline '
+                pipeline: ' mypipeline ',
+                pipeline_instance_vars: {}
             }
         };
 
@@ -192,7 +194,7 @@ describe('validate.input', () => {
 
     it('checks fields with array constraint', () => {
         const constrainedFields = [
-            'params.events'
+            'params.events',
         ];
 
         constrainedFields.forEach(field => {
@@ -207,7 +209,41 @@ describe('validate.input', () => {
                     resource_name: '',
                     webhook_token: '',
                     operation: 'create',
-                    events: []
+                    events: [],
+                    pipeline: '',
+                    pipeline_instance_vars: {}
+                }
+            };
+
+            expect(() => validate.config(config)).not.toThrow();
+
+            const fieldTree = field.split('.');
+            config[fieldTree[0]][fieldTree[1]] = null;
+
+            expect(() => validate.config(config)).toThrow();
+        });
+    });
+
+    it('checks fields with object constraint', () => {
+        const constrainedFields = [
+            'params.pipeline_instance_vars'
+        ];
+
+        constrainedFields.forEach(field => {
+            const config = {
+                source: {
+                    github_api: '',
+                    github_token: ''
+                },
+                params: {
+                    org: '',
+                    repo: '',
+                    resource_name: '',
+                    webhook_token: '',
+                    operation: 'create',
+                    events: [],
+                    pipeline: '',
+                    pipeline_instance_vars: {}
                 }
             };
 

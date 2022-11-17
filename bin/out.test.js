@@ -16,25 +16,29 @@ describe('out', () => {
     describe('buildInstanceVaribles', () => {
         it('with unset variables, returns empty string', () => {
             delete process.env.BUILD_PIPELINE_INSTANCE_VARS;
-            const instanceVar = out.buildInstanceVariables();
+            const params = {};
+            const instanceVar = out.buildInstanceVariables(params);
             expect(instanceVar).toEqual('')
         });
     
         it('with empty variables, returns empty string', () => {
             process.env.BUILD_PIPELINE_INSTANCE_VARS = "{}";
-            const instanceVar = out.buildInstanceVariables();
+            const params = {pipeline_instance_vars: {}};
+            const instanceVar = out.buildInstanceVariables(params);
             expect(instanceVar).toEqual('')
         });
     
         it('with bad json, it throws an exception', () => {
             process.env.BUILD_PIPELINE_INSTANCE_VARS = "{695988";
-            expect(() => out.buildInstanceVariables()).toThrow();
+            const params = {};
+            expect(() => out.buildInstanceVariables(params)).toThrow();
         });
     
         it('with valid instance variables, it builds variable string to append to url', () => {
             process.env.BUILD_PIPELINE_INSTANCE_VARS = '{"name":"John", "age":30, "car":"Toyota"}';
-            const instanceVar = out.buildInstanceVariables();
-            expect(instanceVar).toEqual(`&vars.name="John"&vars.age="30"&vars.car="Toyota"`)
+            const params = {pipeline_instance_vars: {"license": "full"}};
+            const instanceVar = out.buildInstanceVariables(params);
+            expect(instanceVar).toEqual(`&vars.name="John"&vars.age="30"&vars.car="Toyota"&vars.license="full"`)
         });
     });
 
