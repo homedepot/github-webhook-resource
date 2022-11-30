@@ -46,16 +46,25 @@ stdin.on('end', function () {
 });
 
 function buildUrl(source, params) {
-    const instanceVars = buildInstanceVariables();
-    return encodeURI(`${env.ATC_EXTERNAL_URL}/api/v1/teams/${env.BUILD_TEAM_NAME}/pipelines/${env.BUILD_PIPELINE_NAME}/resources/${params.resource_name}/check/webhook?webhook_token=${params.webhook_token}${instanceVars}`);
+    const instanceVars = buildInstanceVariables(params);
+    return encodeURI(`${env.ATC_EXTERNAL_URL}/api/v1/teams/${env.BUILD_TEAM_NAME}/pipelines/${params.pipeline ? params.pipeline : env.BUILD_PIPELINE_NAME}/resources/${params.resource_name}/check/webhook?webhook_token=${params.webhook_token}${instanceVars}`);
 }
 
-function buildInstanceVariables() {
+function buildInstanceVariables(params) {
     let vars = "";
     if (env.BUILD_PIPELINE_INSTANCE_VARS) {
         try {
             const instanceVars = JSON.parse(env.BUILD_PIPELINE_INSTANCE_VARS)
             for (const [key, value] of Object.entries(instanceVars)) {
+                vars += `&vars.${key}="${value}"`;
+            }
+        } catch(exception) {
+            throw new Error(exception);
+        }
+    }
+    if ("pipeline_instance_vars" in params && params.pipeline_instance_vars) {
+        try {
+            for (const [key, value] of Object.entries(params.pipeline_instance_vars)) {
                 vars += `&vars.${key}="${value}"`;
             }
         } catch(exception) {
@@ -200,4 +209,4 @@ function log(message) {
     console.error(message);
 }
 
-module.exports = { buildInstanceVariables };
+module.exports = { buildInstanceVariables, buildUrl };

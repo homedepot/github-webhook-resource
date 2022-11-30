@@ -46,7 +46,14 @@ const configSchema = {
                     transform: ['trim', 'toEnumCase'],
                     enum: validOperations,
                     errorMessage: { enum: 'must be either create or delete' }
-                }
+                },
+                pipeline:      { 
+                    type: 'string',
+                    transform: ['trim', 'toLowerCase']
+                },
+                pipeline_instance_vars: { 
+                    type: 'object',
+                },
             },
             required: ['org', 'repo', 'resource_name', 'webhook_token', 'operation']
         },
