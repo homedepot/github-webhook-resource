@@ -4,6 +4,7 @@ require('ajv-errors')(ajv);
 require('ajv-keywords')(ajv, 'transform');
 
 const validOperations = ['create', 'delete'];
+const validContentTypes = ['form', 'json'];
 
 const envSchema = {
     type: 'object',
@@ -47,13 +48,24 @@ const configSchema = {
                     enum: validOperations,
                     errorMessage: { enum: 'must be either create or delete' }
                 },
-                pipeline:      { 
+                pipeline:      {
                     type: 'string',
                     transform: ['trim', 'toLowerCase']
                 },
-                pipeline_instance_vars: { 
+                pipeline_instance_vars: {
                     type: 'object',
                 },
+                payload_base_url: {
+                    type: 'string',
+                    transform: ['trim', 'toLowerCase']
+                },
+                payload_content_type: {
+                    type: 'string',
+                    transform: ['trim', 'toEnumCase'],
+                    enum: validContentTypes,
+                    errorMessage: { enum: 'must be either form or json' }
+                },
+                payload_secret: { type: 'string' }
             },
             required: ['org', 'repo', 'resource_name', 'webhook_token', 'operation']
         },
