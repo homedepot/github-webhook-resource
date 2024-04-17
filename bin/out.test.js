@@ -43,7 +43,7 @@ describe('out', () => {
     });
 
     describe('buildUrl', () => {
-        it('defaults to using the current pipeline name', () => {
+        it('defaults to using the concourse env vars', () => {
             process.env.ATC_EXTERNAL_URL = 'https://example.com';
             process.env.BUILD_PIPELINE_NAME = 'pipeline';
             process.env.BUILD_TEAM_NAME = 'team';
@@ -55,17 +55,18 @@ describe('out', () => {
             expect(instanceVar).toEqual("https://example.com/api/v1/teams/team/pipelines/pipeline/resources/resource/check/webhook?webhook_token=token")
         });
       
-        it('prefers the pipeline name from params', () => {
+        it('prefers the concourse vars from params', () => {
             process.env.ATC_EXTERNAL_URL = 'https://example.com';
             process.env.BUILD_PIPELINE_NAME = 'pipeline';
             process.env.BUILD_TEAM_NAME = 'team';
             const params = {
-                pipeline: 'another-pipeline',
+                pipeline: 'param-pipeline',
+                payload_base_url: 'https://param-example.com',
                 resource_name: 'resource',
                 webhook_token: 'token'
             }
             const instanceVar = out.buildUrl(null, params);
-            expect(instanceVar).toEqual("https://example.com/api/v1/teams/team/pipelines/another-pipeline/resources/resource/check/webhook?webhook_token=token")
+            expect(instanceVar).toEqual("https://param-example.com/api/v1/teams/team/pipelines/param-pipeline/resources/resource/check/webhook?webhook_token=token")
         });
     });
 });
