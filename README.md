@@ -28,8 +28,8 @@ resources:
     github_token: ((github-token))
 ```
 
--	`github_api`: *Required.* The Github API URL for your repo.
--   `github_token`: *Required.* [A Github token with the `admin:repo_hook` scope.](https://github.com/settings/tokens/new?scopes=admin:repo_hook) Additionally, the token's account must [be an administrator of your repo](https://help.github.com/en/articles/managing-an-individuals-access-to-an-organization-repository) to manage the repo's webhooks.
+- `github_api`: *Required.* The Github API URL for your repo.
+- `github_token`: *Required.* [A Github token with the `admin:repo_hook` scope.](https://github.com/settings/tokens/new?scopes=admin:repo_hook) Additionally, the token's account must [be an administrator of your repo](https://help.github.com/en/articles/managing-an-individuals-access-to-an-organization-repository) to manage the repo's webhooks.
 
 Behavior
 --------
@@ -54,18 +54,26 @@ Create or delete a webhook using the configured parameters.
     pipeline_instance_vars: {
         your_instance_var_name: value
     }
+    payload_base_url: your-payload-base-url
+    payload_content_type: json
+    payload_secret: your-payload-secret
 ```
 
--	`org`: *Required.* Your github organization.
--	`repo`: *Required.* Your github repository.
--	`resource_name`: *Required.* Name of the resource to be associated with your webhook.
--	`webhook_token`: *Required.* Arbitrary string to identify your webhook. Must match the `webhook_token` property of the resource your webhook points to.
--	`operation`: *Required.*
-    -   `create` to create a new webhook. Updates existing webhook if your configuration differs from remote.
-    -   `delete` to delete an existing webhook. Outputs current timestamp on non-existing webhooks.
--   `events`: *Optional*. An array of [events](https://developer.github.com/webhooks/#events) which will trigger your webhook. Default: `push`
--	`pipeline`: *Optional.* Defaults to the name of the pipeline executing the task
--	`pipeline_instance_vars`: *Optional.* Instance vars to append to the webhook url. These help Concourse identify which [instance pipeline](https://concourse-ci.org/resources.html#schema.resource.webhook_token) it should invoke
+- `org`: *Required.* Your github organization.
+- `repo`: *Required.* Your github repository.
+- `resource_name`: *Required.* Name of the resource to be associated with your webhook.
+- `webhook_token`: *Required.* Arbitrary string to identify your webhook. Must match the `webhook_token` property of the resource your webhook points to.
+- `operation`: *Required.*
+  - `create` to create a new webhook. Updates existing webhook if your configuration differs from remote.
+  - `delete` to delete an existing webhook. Outputs current timestamp on non-existing webhooks.
+- `events`: *Optional*. An array of [events](https://developer.github.com/webhooks/#events) which will trigger your webhook. Default: `push`
+- `pipeline`: *Optional.* Defaults to the name of the pipeline executing the task
+- `pipeline_instance_vars`: *Optional.* Instance vars to append to the webhook url. These help Concourse identify which [instance pipeline](https://concourse-ci.org/resources.html#schema.resource.webhook_token) it should invoke
+- `payload_base_url`: *Optional.* The base URL to send the webhook payload to. Defaults to the external Concourse URL of the pipeline executing the task.
+- `payload_content_type`: *Optional.* Default: `json`
+  - `json` to serialize payloads to JSON.
+  - `form` to serialize payloads to x-www-form-urlencoded.
+- `payload_secret`: *Optional.* Secret that is used as the key to generate [delivery signature headers](https://docs.github.com/en/webhooks/webhook-events-and-payloads#delivery-headers), if the destination requires it for delivery validation.
 
 ## Example
 Include the github-webhook-resource in your pipeline.yml file

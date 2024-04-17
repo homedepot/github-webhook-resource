@@ -118,6 +118,9 @@ describe('validate.input', () => {
             'params.webhook_token',
             'params.operation',
             'params.pipeline',
+            'params.payload_base_url',
+            'params.payload_content_type',
+            'params.payload_secret'
         ];
 
         constrainedFields.forEach(field => {
@@ -131,7 +134,11 @@ describe('validate.input', () => {
                     repo: '',
                     resource_name: '',
                     webhook_token: '',
-                    operation: 'create'
+                    operation: 'create',
+                    pipeline: '',
+                    payload_base_url: '',
+                    payload_content_type: 'json',
+                    payload_secret: ''
                 }
             };
 
@@ -158,7 +165,9 @@ describe('validate.input', () => {
                 operation: 'CrEaTe',
                 events: ['pUsH'],
                 pipeline: 'mYPipeline',
-                pipeline_instance_vars: {}
+                pipeline_instance_vars: {},
+                payload_base_url: 'hTTps://ExampLe.com',
+                payload_content_type: 'JsOn'
             }
         };
 
@@ -166,6 +175,8 @@ describe('validate.input', () => {
         expect(config.params.operation).toBe('create');
         expect(config.params.events).toEqual(['push']);
         expect(config.params.pipeline).toBe('mypipeline');
+        expect(config.params.payload_base_url).toBe('https://example.com');
+        expect(config.params.payload_content_type).toBe('json');
     });
 
     it('trims whitespace', () => {
@@ -182,7 +193,9 @@ describe('validate.input', () => {
                 operation: ' create ',
                 events: [' push '],
                 pipeline: ' mypipeline ',
-                pipeline_instance_vars: {}
+                pipeline_instance_vars: {},
+                payload_base_url: ' https://example.com ',
+                payload_content_type: ' json '
             }
         };
 
@@ -190,6 +203,8 @@ describe('validate.input', () => {
         expect(config.params.operation).toBe('create');
         expect(config.params.events).toEqual(['push']);
         expect(config.params.pipeline).toBe('mypipeline');
+        expect(config.params.payload_base_url).toBe('https://example.com');
+        expect(config.params.payload_content_type).toBe('json');
     });
 
     it('checks fields with array constraint', () => {
@@ -211,7 +226,10 @@ describe('validate.input', () => {
                     operation: 'create',
                     events: [],
                     pipeline: '',
-                    pipeline_instance_vars: {}
+                    pipeline_instance_vars: {},
+                    payload_base_url: '',
+                    payload_content_type: 'json',
+                    payload_secret: ''
                 }
             };
 
@@ -243,7 +261,10 @@ describe('validate.input', () => {
                     operation: 'create',
                     events: [],
                     pipeline: '',
-                    pipeline_instance_vars: {}
+                    pipeline_instance_vars: {},
+                    payload_base_url: '',
+                    payload_content_type: 'json',
+                    payload_secret: ''
                 }
             };
 
